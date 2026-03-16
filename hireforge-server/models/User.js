@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
 otpExpires: Date,
 twoFactorEnabled: {
   type: Boolean,
-  default: true // enable 2FA for all users
+  default: true 
 }
 
   },

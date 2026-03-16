@@ -22,7 +22,7 @@ const Navbar = () => {
 
       {token && (
         <>
-          <Link to="/dashboard" style={{ marginRight: "15px" }}>
+          <Link to="/candidate/dashboard" style={{ marginRight: "15px" }}>
             Dashboard
           </Link>
 

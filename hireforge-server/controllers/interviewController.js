@@ -5,14 +5,11 @@ const AppError = require("../utils/AppError");
 // Interview = the exam/template created by the admin.
 // Attempt = one candidate’s try of that interview.
 
-
 exports.createInterview = asyncWrapper(async (req, res) => {
-
   const interview = await Interview.create({
     ...req.body,
     createdBy: req.user.id
   });
-
   res.status(201).json({
     success: true,
     data: interview
@@ -86,5 +83,28 @@ exports.toggleInterviewStatus = asyncWrapper(async (req, res) => {
     success: true,
     data: interview
   });
-
 });
+//..
+
+exports.getInterviewById = asyncWrapper(async (req, res) => {
+  const interview = await Interview
+    .findById(req.params.id)
+    .populate("questions");
+
+  res.json(interview);
+});
+
+exports.attachQuestions = asyncWrapper(async (req, res) => {
+  const { id } = req.params;
+  const { questions } = req.body;
+
+  const interview = await Interview.findById(id);
+
+  interview.questions.push(...questions);
+
+  await interview.save();
+
+  res.json({ message: "Questions added", interview });
+});
+
+
