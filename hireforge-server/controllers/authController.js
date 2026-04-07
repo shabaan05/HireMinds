@@ -40,10 +40,7 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user)
       return res.status(400).json({ message: "Invalid credentials" });
-    //,..
-console.log("Password:", password);
-console.log("User hashed  password:", user.password);
-//.........
+
 
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("Password match:", isMatch);
@@ -56,15 +53,12 @@ console.log("User hashed  password:", user.password);
       const otp = generateOTP();
       // const otp = generateOTP().toString();
 
-console.log("Generated OTP:", otp);   // 👈 ADD THIS
 
 const hashedOtp = await bcrypt.hash(otp, 10);
 user.otp = hashedOtp;
       user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 mins
       await user.save();
-//...
-console.log("Saved OTP hash:", user.otp);
-//....
+
       await sendOTPEmail(user.email, otp);
 
       return res.json({

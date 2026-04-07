@@ -14,11 +14,11 @@ const interviewSchema = new mongoose.Schema(
       trim: true,
     },
 
-    role: {
-      type: String,
-      required: [true, "Role is required"],
-      trim: true,
-    },
+    // role: {
+    //   type: String,
+    //   required: [true, "Role is required"],
+    //   trim: true,
+    // },
 
     experienceLevel: {
       type: String,

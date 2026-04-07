@@ -6,7 +6,7 @@ const VerifyOTP = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const email = location.state?.email;
+const email = localStorage.getItem("email");
 
   const {
     register,
@@ -14,7 +14,6 @@ const VerifyOTP = () => {
     formState: { errors, isSubmitting }
   } = useForm();
 
-  // ✅ DEFINE onSubmit HERE (before return)
   const onSubmit = async (data) => {
     try {
       const res = await verifyOTP({
@@ -23,7 +22,8 @@ const VerifyOTP = () => {
       });
 
       const { accessToken, refreshToken, user } = res;
-
+      //..
+console.log(res);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));

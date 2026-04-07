@@ -45,8 +45,11 @@ function InterviewForm() {
 
     try {
 
-      const res = await createInterview(values);
-
+      // const res = await createInterview(values);
+const res = await createInterview({
+  ...values,
+  duration: Number(values.duration) // 🔥 FIX HERE
+});
       const interviewId = res.data._id;
 
       resetForm();

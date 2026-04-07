@@ -7,7 +7,8 @@ const {
   startInterview,
   saveAnswer,
   submitInterview,
-  getResult
+  getResult,
+  getUserAttempts
 } = require("../controllers/attemptController");
 
 
@@ -19,6 +20,7 @@ router.post("/:attemptId/answer", authMiddleware, saveAnswer);
 
 // Submit interview
 router.post("/:attemptId/submit", authMiddleware, submitInterview);
+router.get("/user", authMiddleware, getUserAttempts);
 
 // Get result
 router.get("/:attemptId/result", authMiddleware, getResult);

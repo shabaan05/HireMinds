@@ -4,18 +4,22 @@ const AppError = require("../utils/AppError");
 
 // Interview = the exam/template created by the admin.
 // Attempt = one candidate’s try of that interview.
-
 exports.createInterview = asyncWrapper(async (req, res) => {
   const interview = await Interview.create({
     ...req.body,
-    createdBy: req.user.id
-  });
-  res.status(201).json({
-    success: true,
-    data: interview
+    createdBy: req.user._id,
   });
 
+  res.status(201).json({
+    success: true,
+    data: interview,
+  });
 });
+
+ 
+
+;
+
 
 
 exports.getInterviews = asyncWrapper(async (req, res) => {

@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const getInterviews = async () => {
   const response = await axiosInstance.get("/interviews");
-  return response.data;
+  return response.data.data;
 };
 
 export const getInterviewById = async (id) => {
@@ -10,7 +10,7 @@ export const getInterviewById = async (id) => {
   return response.data;
 };
 
-export const createInterview = async (data) => {
+export const createInterview = async (data) => { // dont change
   const response = await axiosInstance.post("/interviews", data);
   return response.data;
 };

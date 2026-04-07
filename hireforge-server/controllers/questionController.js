@@ -26,7 +26,21 @@ exports.getQuestions = asyncWrapper(async (req, res) => {
   });
 
 });
+//...
+exports.getQuestionById = async (req, res) => {
+  try {
+    const question = await Question.findById(req.params.id);
 
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    res.json({ success: true, data: question });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 exports.updateQuestion = asyncWrapper(async (req, res) => {
 

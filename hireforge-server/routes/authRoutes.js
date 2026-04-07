@@ -19,6 +19,7 @@ router.post("/login", loginValidation, validate, login);
 
 //  Verify OTP (returns tokens)
 router.post("/verify-otp", otpValidation, validate, verifyOTP);
+
 // auth middleware
 router.get("/protected", authMiddleware, (req, res) => {
   res.json({

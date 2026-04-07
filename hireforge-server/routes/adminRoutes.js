@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { getAllAttempts } = require("../controllers/adminController");
-const adminAuth = require("../middleware/adminAuth");
+const { getAllAttempts,getAdminStats } = require("../controllers/adminController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
-router.get("/attempts", adminAuth, getAllAttempts);
+router.get("/attempts", authMiddleware, getAllAttempts);
+router.get("/stats",authMiddleware, getAdminStats);
 
 module.exports = router;

@@ -1,306 +1,21 @@
-// const Interview = require("../models/Interview");
-// const Attempt = require("../models/Attempt");
-// const { evaluateSubjective } = require("../services/aiService");
 
-// exports.startInterview = async (req, res) => {
-//   try {
-//     const interviewId = req.params.id;
-//     const userId = req.user.id;
-
-//     // 1️⃣ Check if interview exists and is active
-//     const interview = await Interview.findById(interviewId);
-
-//     if (!interview || !interview.isActive) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Interview not found or not active",
-//       });
-//     }
-
-//     // 2️⃣ Check if user already started this interview
-//     const existingAttempt = await Attempt.findOne({
-//       userId,
-//       interviewId,
-//       status: { $in: ["in-progress", "submitted"] },
-//     });
-
-//     if (existingAttempt) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "You have already started this interview",
-//       });
-//     }
-
-//     // 3️⃣ Create attempt
-//     const attempt = await Attempt.create({
-//       userId,
-//       interviewId,
-//       totalMarks: interview.totalMarks || 0,
-//       status: "in-progress",
-//       startedAt: new Date(),
-//       timeSpent: 0,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Interview started successfully",
-//       data: attempt,
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
-// //..this create answer push to 
-
-// exports.saveAnswer = async (req, res) => {
-//   try {
-//     const { attemptId } = req.params;
-//     const { questionId, selectedAnswer, codeSubmitted, subjectiveAnswer } = req.body;
-
-//     const attempt = await Attempt.findById(attemptId);
-
-//     if (!attempt) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Attempt not found",
-//       });
-//     }
-
-//     if (attempt.status !== "in-progress") {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Interview already submitted",
-//       });
-//     }
-
-//     // Check if answer already exists
-//     const existingAnswerIndex = attempt.answers.findIndex(
-//       (ans) => ans.questionId.toString() === questionId
-//     );
-
-//     if (existingAnswerIndex > -1) {
-//       // Update existing answer
-//       attempt.answers[existingAnswerIndex] = {
-//         ...attempt.answers[existingAnswerIndex]._doc,
-//         selectedAnswer: selectedAnswer || "",
-//         codeSubmitted: codeSubmitted || "",
-//         subjectiveAnswer: subjectiveAnswer || "",
-//       };
-//     } else {
-//       // Add new answer
-//       attempt.answers.push({
-//         questionId,
-//         selectedAnswer: selectedAnswer || "",
-//         codeSubmitted: codeSubmitted || "",
-//         subjectiveAnswer: subjectiveAnswer || "",
-//       });
-//     }
-
-//     await attempt.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Answer saved successfully",
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
-// //.........submitting interview
-// const Question = require("../models/Question");
-// const Attempt = require("../models/Attempt");
-
-// exports.submitInterview = async (req, res) => {
-//   try {
-//     const { attemptId } = req.params;
-
-//     const attempt = await Attempt.findById(attemptId);
-
-//     if (!attempt) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Attempt not found",
-//       });
-//     }
-
-//     if (attempt.status !== "in-progress") {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Interview already submitted",
-//       });
-//     }
-
-//     let totalScore = 0;
-//     let correctAnswers = 0;
-
-//     // Loop through answers
-//     for (let answer of attempt.answers) {
-//       const question = await Question.findById(answer.questionId);
-
-//       if (!question) continue;
-
-//       // ✅ MCQ scoring
-//       if (question.type === "mcq") {
-//         if (answer.selectedAnswer === question.correctAnswer) {
-//           answer.isCorrect = true;
-//           answer.obtainedMarks = question.marks;
-//           totalScore += question.marks;
-//           correctAnswers++;
-//         } else {
-//           answer.isCorrect = false;
-//           answer.obtainedMarks = 0;
-//         }
-//       }
-
-//       // 🔹 Coding  tempoaray later use sandbox enviroument
-//       if (question.type === "coding") {
-//   let passedCount = 0;
-//   const totalTestCases = question.testCases.length;
-
-//   for (let testCase of question.testCases) {
-//     try {
-//       // ⚠ Example only — replace with safe code runner
-//       const userFunction = new Function("input", answer.codeSubmitted);
-//       const output = userFunction(testCase.input);
-
-//       if (String(output).trim() === String(testCase.expectedOutput).trim()) {
-//         passedCount++;
-//       }
-
-//     } catch (err) {
-//       // If code crashes → test case fails
-//     }
-//   }
-
-//   const marksEarned =
-//     totalTestCases > 0
-//       ? (passedCount / totalTestCases) * question.marks
-//       : 0;
-
-//   answer.obtainedMarks = marksEarned;
-//   totalScore += marksEarned;
-// }
-// //subjective  uisng ai 
-// if (question.type === "subjective") {
-
-//   const aiScore = await evaluateSubjective(
-//     question.questionText,
-//     answer.subjectiveAnswer,
-//     question.marks
-//   );
-
-//   answer.obtainedMarks = aiScore;
-//   totalScore += aiScore;
-// }
-
-//     }
-
-//     // Calculate accuracy
-//     const accuracy =
-//       attempt.answers.length > 0
-//         ? (correctAnswers / attempt.answers.length) * 100
-//         : 0;
-
-//     // Update attempt
-//     attempt.score = totalScore;
-//     attempt.accuracy = accuracy;
-//     attempt.status = "submitted";
-//     attempt.submittedAt = new Date();
-
-//     await attempt.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Interview submitted successfully",
-//       data: {
-//         score: attempt.score,
-//         accuracy: attempt.accuracy,
-//       },
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
-// //. result
-
-
-// exports.getResult = async (req, res) => {
-//   try {
-//     const { attemptId } = req.params;
-
-//     const attempt = await Attempt.findById(attemptId)
-//       .populate("answers.questionId", "questionText marks type")
-//       .populate("interviewId", "title passingMarks");
-
-//     if (!attempt) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Attempt not found",
-//       });
-//     }
-
-//     if (attempt.status !== "submitted") {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Interview not submitted yet",
-//       });
-//     }
-
-//     const passingMarks = attempt.interviewId.passingMarks || 0;
-
-//     const resultStatus =
-//       attempt.score >= passingMarks ? "PASS" : "FAIL";
-
-//     res.status(200).json({
-//       success: true,
-//       data: {
-//         interviewTitle: attempt.interviewId.title,
-//         score: attempt.score,
-//         totalMarks: attempt.totalMarks,
-//         accuracy: attempt.accuracy,
-//         status: resultStatus,
-//         answers: attempt.answers,
-//       },
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
+//......................................
 const Attempt = require("../models/Attempt");
 const Interview = require("../models/Interview");
 const Question = require("../models/Question");
 const { evaluateInterview } = require("../services/evaluationService");
 
+// 🚀 Start Interview
 exports.startInterview = async (req, res) => {
   try {
-    const interview = await Interview.findById(req.params.id);
+    const interview = await Interview.findById(req.params.interviewId);
 
     if (!interview || !interview.isActive) {
       return res.status(404).json({ message: "Interview not available" });
     }
 
     const attempt = await Attempt.create({
-      userId: req.user.id,
+      userId: req.user._id, // ✅ FIXED
       interviewId: interview._id,
       totalMarks: interview.totalMarks || 0,
       status: "in-progress",
@@ -312,29 +27,96 @@ exports.startInterview = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-
-exports.saveAnswer = async (req, res) => {
+//
+const getAttemptById = async (req, res) => {
   try {
     const { attemptId } = req.params;
-    const { questionId, selectedAnswer, codeSubmitted, subjectiveAnswer } = req.body;
+
+    const attempt = await Attempt.findById(attemptId)
+      .populate("questions");
+
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+
+    res.json(attempt);
+
+  } catch (error) {
+    console.error("getAttemptById error:", error);
+    res.status(500).json({ message: "Error fetching attempt" });
+  }
+};
+//..
+const startAttempt = async (req, res) => {
+  try {
+    const { interviewId } = req.body;
+    const userId = req.user.id;
+
+    const attempt = await Attempt.create({
+      user: userId,
+      interview: interviewId,
+      status: "in_progress",
+      startedAt: new Date(),
+    });
+
+    res.json({ attemptId: attempt._id });
+
+  } catch (error) {
+    console.error("startAttempt error:", error);
+    res.status(500).json({ message: "Failed to start attempt" });
+  }
+};
+//..
+
+//..
+const submitAttempt = async (req, res) => {
+  try {
+    const { attemptId, answers } = req.body;
 
     const attempt = await Attempt.findById(attemptId);
 
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+
+    attempt.answers = answers;
+    attempt.status = "completed";
+
+    await attempt.save();
+
+    res.json({ message: "Submitted successfully" });
+
+  } catch (error) {
+    console.error("submitAttempt error:", error);
+    res.status(500).json({ message: "Submission failed" });
+  }
+};
+// 💾 Save Answer
+exports.saveAnswer = async (req, res) => {
+  try {
+    const { attemptId, questionId, selectedAnswer, codeSubmitted, subjectiveAnswer } = req.body;
+
+    const attempt = await Attempt.findById(req.params.attemptId);
+
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
+
+    // find existing answer
     const existing = attempt.answers.find(
-      a => a.questionId.toString() === questionId
+      (ans) => ans.questionId.toString() === questionId
     );
 
     if (existing) {
-      existing.selectedAnswer = selectedAnswer || "";
-      existing.codeSubmitted = codeSubmitted || "";
-      existing.subjectiveAnswer = subjectiveAnswer || "";
+      existing.selectedAnswer = selectedAnswer ?? existing.selectedAnswer;
+      existing.codeSubmitted = codeSubmitted ?? existing.codeSubmitted;
+      existing.subjectiveAnswer = subjectiveAnswer ?? existing.subjectiveAnswer;
     } else {
       attempt.answers.push({
         questionId,
-        selectedAnswer,
-        codeSubmitted,
-        subjectiveAnswer
+        selectedAnswer: selectedAnswer || "",
+        codeSubmitted: codeSubmitted || "",
+        subjectiveAnswer: subjectiveAnswer || "",
       });
     }
 
@@ -342,16 +124,35 @@ exports.saveAnswer = async (req, res) => {
 
     res.json({ success: true, message: "Answer saved" });
 
+  } catch (error) {
+    console.error("saveAnswer error:", error);
+    res.status(500).json({ message: "Failed to save answer" });
+  }
+};
+
+// 📊 Get User Attempts
+exports.getUserAttempts = async (req, res) => {
+  try {
+    const attempts = await Attempt
+      .find({ userId: req.user._id }) // ✅ FIXED
+      .populate("interviewId", "title");
+
+    res.json({ success: true, data: attempts });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-
+// 🧠 Submit Interview
 exports.submitInterview = async (req, res) => {
   try {
     const attempt = await Attempt.findById(req.params.attemptId)
       .populate("answers.questionId");
+
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
 
     const result = await evaluateInterview(attempt);
 
@@ -369,11 +170,15 @@ exports.submitInterview = async (req, res) => {
   }
 };
 
-
+// 📄 Get Result
 exports.getResult = async (req, res) => {
   try {
     const attempt = await Attempt.findById(req.params.attemptId)
       .populate("answers.questionId", "questionText marks");
+
+    if (!attempt) {
+      return res.status(404).json({ message: "Attempt not found" });
+    }
 
     res.json({ success: true, data: attempt });
 

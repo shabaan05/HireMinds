@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const {
   createInterview,
@@ -22,9 +23,8 @@ console.log({
   attachQuestions,
   getInterviewById
 });
-const authMiddleware = require("../middlewares/authMiddleware");
 // Create interview
-router.post("/", createInterview);
+router.post("/",authMiddleware,  createInterview);
 
 // Get all interviews
 router.get("/", getInterviews);

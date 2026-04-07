@@ -31,6 +31,7 @@ const Login = () => {
       const res = await loginUser({ email, password });
 
       console.log("Login response:", res);
+localStorage.setItem("email", email);
 
       // 🔐 If OTP is required
       if (res.requiresOTP) {
@@ -45,7 +46,7 @@ const Login = () => {
         localStorage.setItem("accessToken", res.accessToken);
         localStorage.setItem("refreshToken", res.refreshToken);
         localStorage.setItem("user", JSON.stringify(res.user));
-
+//.
         // Redirect based on role
         if (res.user.role === "admin") {
           navigate("/admin/dashboard");

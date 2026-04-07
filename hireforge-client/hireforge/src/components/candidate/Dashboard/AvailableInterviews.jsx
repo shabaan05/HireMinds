@@ -12,4 +12,4 @@ function AvailableInterviews({ interviews }) {
     </div>
   );
 }
-
+export default AvailableInterviews

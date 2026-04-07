@@ -1,5 +1,6 @@
 const Attempt = require("../models/Attempt");
-
+const User = require("../models/User");
+const Interview = require("../models/Interview");
 exports.getAllAttempts = async (req, res) => {
   try {
     const { interviewId } = req.query;
@@ -26,5 +27,31 @@ exports.getAllAttempts = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+exports.getAdminStats = async (req, res, next) => {
+  try {
+
+    const totalUsers = await User.countDocuments();
+
+    const totalInterviews = await Interview.countDocuments();
+
+    const activeInterviews = await Interview.countDocuments({
+      isActive: true
+    });
+
+    const totalAttempts = await Attempt.countDocuments();
+
+    res.json({
+      data: {
+        totalUsers,
+        totalInterviews,
+        activeInterviews,
+        totalAttempts
+      }
+    });
+      } catch (error) {
+    next(error);
   }
 };
