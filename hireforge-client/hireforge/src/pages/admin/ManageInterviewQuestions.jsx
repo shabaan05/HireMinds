@@ -16,7 +16,7 @@ function ManageInterviewQuestions() {
 
   const fetchQuestions = async () => {
     const data = await getQuestions();
-    setQuestions(data); // ✅ FIX
+    setQuestions(data); 
   };
 
   useEffect(() => {
@@ -24,17 +24,25 @@ function ManageInterviewQuestions() {
   }, []);
 
 
-  const handleAttach = async () => {
-    if (selected.length === 0) {
-      alert("Select at least one question");
-      return;
-    }
+  
 
-    await attachQuestions(id, { questionIds: selected });
+ const handleAttach = async () => {
+  if (selected.length === 0) {
+    alert("Select at least one question");
+    return;
+  }
 
-    alert("Questions added");
-    navigate("/admin/interviews");
-  };
+  try {
+    console.log("Sending:", selected);
+
+await attachQuestions(id, selected);
+    console.log("SUCCESS");
+
+    navigate(`/admin/interviews/${id}/manage`);
+  } catch (err) {
+    console.error("ERROR:", err);
+  }
+};
 
 
 return questions.length === 0 ? (

@@ -8,7 +8,7 @@ function InterviewList() {
 
   const fetchInterviews = async () => {
     const res = await getInterviews();
-    setInterviews(res.data);
+    setInterviews(res);
   };
 
   useEffect(() => {

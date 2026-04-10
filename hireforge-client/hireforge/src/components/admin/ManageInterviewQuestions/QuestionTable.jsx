@@ -1,6 +1,6 @@
 import QuestionRow from "./QuestionRow";
 
-function QuestionTable({ questions, selected, setSelected }) {
+function QuestionTable({ questions, selected, onSelect }) {
 
   return (
     <table border="1">
@@ -17,12 +17,12 @@ function QuestionTable({ questions, selected, setSelected }) {
 
       <tbody>
         {questions.map(q => (
-          <QuestionRow
-            key={q._id}
-            question={q}
-            selected={selected}
-            setSelected={setSelected}
-          />
+         <QuestionRow
+  key={q._id}
+  question={q}
+  selected={selected}
+  onSelect={onSelect} 
+/>
         ))}
       </tbody>
 

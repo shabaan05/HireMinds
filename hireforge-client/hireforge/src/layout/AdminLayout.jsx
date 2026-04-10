@@ -1,11 +1,13 @@
-const AdminLayout = ({ children }) => {
+import AdminNavbar from "../components/admin/AdminNavbar";
+import { Outlet } from "react-router-dom";
+
+function AdminLayout() {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div>
-        <Navbar />
-        {children}
-      </div>
-    </div>
+    <>
+      <AdminNavbar />
+      <Outlet />
+    </>
   );
-};
+}
+
+export default AdminLayout;

@@ -1,6 +1,6 @@
 import InterviewRow from "./InterviewRow";
 
-function InterviewTable({ interviews }) {
+function InterviewTable({ interviews = [] }) { // ✅ default empty array
 
   return (
     <table border="1">
@@ -16,9 +16,15 @@ function InterviewTable({ interviews }) {
 
       <tbody>
 
-        {interviews.map((interview) => (
-          <InterviewRow key={interview._id} interview={interview} />
-        ))}
+        {interviews.length === 0 ? (
+          <tr>
+            <td colSpan="4">No interviews found</td>
+          </tr>
+        ) : (
+          interviews.map((interview) => (
+            <InterviewRow key={interview._id} interview={interview} />
+          ))
+        )}
 
       </tbody>
 

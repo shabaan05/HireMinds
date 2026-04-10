@@ -8,6 +8,8 @@ export const getAdminStats = async () => {
 };
 //admin route
 export const getAllAttempts = async () => {
-  const res = await axiosInstance.get("/admin/attempts");
+  const res = await axiosInstance.get("/admin");
+    console.log("DATA:", res); // 🔥 ADD THIS
+
   return res.data.data;
 };

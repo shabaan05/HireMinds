@@ -1,8 +1,10 @@
 import MCQQuestion from "./MCQQuestion";
 import SubjectiveQuestion from "./SubjectiveQuestion";
 import CodingQuestion from "./CodingQuestion";
-
+import { useAttempt } from "../../../context/AttemptContext";
+import { useState } from "react";
 const QuestionRenderer = ({ question, answer, onAnswerChange }) => {
+  const { code, setCode, input, setInput, isSubmitted } = useAttempt();
   if (!question) return null;
 
   switch (question.type) {
@@ -26,11 +28,16 @@ const QuestionRenderer = ({ question, answer, onAnswerChange }) => {
 
     case "coding":
       return (
-        <CodingQuestion
-          question={question}
-          answer={answer}
-          onAnswerChange={onAnswerChange}
-        />
+
+   <CodingQuestion 
+  question={question}
+  code={code}
+  setCode={setCode}
+  input={input}
+  setInput={setInput}
+    isSubmitted={isSubmitted}
+
+/>
       );
 
     default:

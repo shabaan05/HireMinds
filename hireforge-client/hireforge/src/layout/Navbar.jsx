@@ -25,6 +25,12 @@ const Navbar = () => {
           <Link to="/candidate/dashboard" style={{ marginRight: "15px" }}>
             Dashboard
           </Link>
+          <Link to="/candidate/profile" style={{ marginRight: "15px" }}>
+            Profile
+          </Link>
+          <Link to="/candidate/attempts" style={{ marginRight: "15px" }}>
+            My attempts
+          </Link>
 
           {user?.role === "admin" && (
             <Link to="/admin" style={{ marginRight: "15px" }}>

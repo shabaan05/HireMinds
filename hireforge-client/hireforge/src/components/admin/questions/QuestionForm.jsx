@@ -1,19 +1,15 @@
 import { useState } from "react";
-// import MCQOptions from "./MCQOptions";
-import MCQOptions from "../../components/admin/questions/MCQOptions";
-// import CodingTestCases from "./CodingTestCases";
-import CodingTestCases from "../../components/admin/questions/CodingTestCases";
-import { createQuestion } from "../../services/questionService";
+import { createQuestion } from "../../../services/questionService";
+import MCQOptions from "./MCQOptions";
+
 function QuestionForm({ onSuccess }) {
   const [form, setForm] = useState({
     questionText: "",
-    type: "mcq", // ✅ lowercase
-    difficulty: "easy", // ✅ lowercase
+    type: "MCQ",
+    difficulty: "Easy",
     topic: "",
     options: ["", "", "", ""],
     correctAnswer: "",
-    testCases: [],
-    marks: 1, // ✅ required
   });
 
   const [errors, setErrors] = useState({});
@@ -29,21 +25,13 @@ function QuestionForm({ onSuccess }) {
       err.questionText = "Question is required";
     }
 
-    if (!form.marks || form.marks < 1) {
-      err.marks = "Marks must be at least 1";
-    }
-
-    if (form.type === "mcq") {
+    if (form.type === "MCQ") {
       if (form.options.some((opt) => !opt.trim())) {
         err.options = "All options are required";
       }
       if (!form.correctAnswer) {
         err.correctAnswer = "Select correct answer";
       }
-    }
-
-    if (form.type === "coding" && form.testCases.length === 0) {
-      err.testCases = "Add at least one test case";
     }
 
     setErrors(err);
@@ -55,20 +43,15 @@ function QuestionForm({ onSuccess }) {
 
     if (!validate()) return;
 
-    await createQuestion({
-      ...form,
-      marks: Number(form.marks), // ✅ ensure number
-    });
+    await createQuestion(form);
 
     setForm({
       questionText: "",
-      type: "mcq",
-      difficulty: "easy",
+      type: "MCQ",
+      difficulty: "Easy",
       topic: "",
       options: ["", "", "", ""],
       correctAnswer: "",
-      testCases: [],
-      marks: 1,
     });
 
     onSuccess();
@@ -84,31 +67,18 @@ function QuestionForm({ onSuccess }) {
       />
       {errors.questionText && <p style={{ color: "red" }}>{errors.questionText}</p>}
 
-      {/* TYPE */}
       <select name="type" value={form.type} onChange={handleChange}>
-        <option value="mcq">MCQ</option>
-        <option value="coding">Coding</option>
-        <option value="subjective">Subjective</option>
+        <option>MCQ</option>
+        <option>Coding</option>
+        <option>Subjective</option>
       </select>
 
-      {/* DIFFICULTY */}
       <select name="difficulty" value={form.difficulty} onChange={handleChange}>
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
+        <option>Easy</option>
+        <option>Medium</option>
+        <option>Hard</option>
       </select>
 
-      {/* MARKS */}
-      <input
-        type="number"
-        name="marks"
-        placeholder="Marks"
-        value={form.marks}
-        onChange={handleChange}
-      />
-      {errors.marks && <p style={{ color: "red" }}>{errors.marks}</p>}
-
-      {/* TOPIC */}
       <input
         name="topic"
         placeholder="Topic"
@@ -116,14 +86,8 @@ function QuestionForm({ onSuccess }) {
         onChange={handleChange}
       />
 
-      {/* MCQ */}
-      {form.type === "mcq" && (
+      {form.type === "MCQ" && (
         <MCQOptions form={form} setForm={setForm} errors={errors} />
-      )}
-
-      {/* CODING */}
-      {form.type === "coding" && (
-        <CodingTestCases form={form} setForm={setForm} errors={errors} />
       )}
 
       <button type="submit">Create Question</button>

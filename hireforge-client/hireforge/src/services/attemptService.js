@@ -1,23 +1,25 @@
  import axiosInstance from "./axiosInstance";
-
-
-
 import api from "./axiosInstance";
 
-// 🚀 Start Interview
+//  Start Interview
 export const startInterview = async (interviewId) => {
-  const res = await api.post(`/attempts/start/${interviewId}`);
+  const res = await api.post(`/attempts/${interviewId}/start`);
   return res.data;
 };
 
-// 📄 Get Attempt by ID
+// Get Attempt by ID
 export const getAttemptById = async (attemptId) => {
-  const res = await api.get(`/attempts/${attemptId}`);
+  const res = await api.get(`/attempts/single/${attemptId}`);
   return res.data;
 };
 
+export const submitAttempt = async ({ attemptId, answers }) => {
+  const res = await api.post(`/attempts/${attemptId}/submit`, {
+    answers,
+  });
 
-
+  return res.data;
+};
 // 💾 Save Answer
 export const saveAnswer = async (attemptId, data) => {
   const res = await api.post(`/attempts/${attemptId}/answer`, data);
@@ -27,7 +29,7 @@ export const saveAnswer = async (attemptId, data) => {
 // 📊 Get User Attempts
 export const getUserAttempts = async () => {
   const res = await api.get(`/attempts/user`);
-  return res.data;
+  return res.data.data;
 };
 
 // 🧠 Submit Interview
@@ -36,7 +38,7 @@ export const submitInterview = async (attemptId) => {
   return res.data;
 };
 
-// 📄 Get Result
+// Get Result
 export const getResult = async (attemptId) => {
   const res = await api.get(`/attempts/${attemptId}/result`);
   return res.data;

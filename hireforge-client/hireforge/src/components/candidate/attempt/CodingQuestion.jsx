@@ -1,4 +1,7 @@
-const CodingQuestion = ({ question, answer, onAnswerChange }) => {
+import Editor from "@monaco-editor/react";
+import { useAttempt } from "../../../context/AttemptContext";
+const CodingQuestion = ({ question }) => {
+  const { code, setCode, input, setInput, isSubmitted } = useAttempt();
   return (
     <div className="mb-4">
       {/* Question Title */}
@@ -25,15 +28,29 @@ const CodingQuestion = ({ question, answer, onAnswerChange }) => {
         </div>
       )}
 
-      {/* Code Editor */}
-      <textarea
-        className="w-full h-64 border rounded p-3 font-mono text-sm"
-        placeholder="Write your code here..."
-        value={answer || ""}
-        onChange={(e) =>
-          onAnswerChange(question._id, e.target.value)
-        }
-      />
+   
+      <Editor
+  height="400px"
+  theme="vs-dark"
+  language="javascript"
+  value={code}
+  onChange={(value) => setCode(value)}
+  options={{
+    readOnly: isSubmitted   
+  }}
+/>
+<div className="mt-4">
+  <h4 className="font-semibold mb-1">Input:</h4>
+
+  <textarea
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+      disabled={isSubmitted}   
+    placeholder="Enter input (e.g. 2 3)"
+    className="w-full border p-2 rounded bg-gray-50"
+    rows={3}
+  />
+</div>
     </div>
   );
 };

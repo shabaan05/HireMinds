@@ -21,8 +21,9 @@ const Instructions = () => {
   useEffect(() => {
     const fetchInterview = async () => {
       try {
-        const res = await getInterviewById(interviewId);
-        setInterview(res.data.data); 
+        const data = await getInterviewById(interviewId);
+        // console.log("res is",res)
+        setInterview(data); 
       } catch (err) {
         console.error("Error fetching interview:", err);
       } finally {
@@ -39,8 +40,8 @@ const Instructions = () => {
       setStarting(true);
 
       const res = await startInterview(interviewId);
-
-      const attemptId = res.data.data._id; // ✅ correct path
+console.log("res",res)
+      const attemptId = res.data._id; 
 
       navigate(`/candidate/attempt/${interviewId}?attemptId=${attemptId}`);
     } catch (err) {

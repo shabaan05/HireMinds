@@ -1,36 +1,20 @@
-function QuestionRow({ question, selected, setSelected }) {
-
-  const handleSelect = () => {
-
-    if (selected.includes(question._id)) {
-      setSelected(selected.filter(id => id !== question._id));
-    } else {
-      setSelected([...selected, question._id]);
-    }
-
-  };
+function QuestionRow({ question, selected, onSelect }) {
 
   return (
     <tr>
-
       <td>
         <input
           type="checkbox"
           checked={selected.includes(question._id)}
-          onChange={handleSelect}
+          onChange={() => onSelect(question._id)} // ✅ FIX
         />
       </td>
 
       <td>{question.questionText}</td>
-
       <td>{question.type}</td>
-
       <td>{question.difficulty}</td>
-
       <td>{question.topic}</td>
-
     </tr>
   );
 }
-
 export default QuestionRow;

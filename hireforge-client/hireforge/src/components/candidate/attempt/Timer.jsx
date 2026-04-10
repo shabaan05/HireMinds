@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
-const Timer = ({ startedAt, duration }) => {
+const Timer = ({ startedAt, duration, onTimeUp }) => {
+
   const calculateTimeLeft = () => {
+    if (!startedAt || !duration) return 0;
+
     const endTime =
       new Date(startedAt).getTime() + duration * 60 * 1000;
 
@@ -14,13 +17,31 @@ const Timer = ({ startedAt, duration }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      const time = calculateTimeLeft();
+      setTimeLeft(time);
+
+      // 🔥 Auto submit when time ends
+      if (time === 0 && onTimeUp) {
+        onTimeUp();
+      }
+
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [startedAt, duration]); // ✅ important fix
 
-  return <div>Time Left: {timeLeft}s</div>;
+  // ✅ Format time (MM:SS)
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <div>
+      ⏳ Time Left: <strong>{formatTime(timeLeft)}</strong>
+    </div>
+  );
 };
 
 export default Timer;

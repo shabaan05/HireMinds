@@ -6,6 +6,8 @@ const interviewRoutes = require("./routes/interviewRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const attemptRoutes = require("./routes/attemptRoutes");
 const  adminRoutes = require("./routes/adminRoutes")
+const codeRoutes = require("./routes/codeRoutes");
+
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
@@ -25,10 +27,7 @@ app.use("/api/interviews", interviewRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/attempts", attemptRoutes);
 app.use("/api/admin", adminRoutes);
-// Test Route
-app.get("/", (req, res) => {
-  res.send("HireForge API Running...");
-});
+app.use("/api/code", codeRoutes);
 
 // Error handler (last)
 app.use(errorHandler);

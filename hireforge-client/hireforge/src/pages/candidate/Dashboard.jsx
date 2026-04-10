@@ -20,8 +20,8 @@ function Dashboard() {
       const interviewsData = await getInterviews();
       const attemptsData = await getUserAttempts();
 
-      setInterviews(interviewsData.data);
-      setAttempts(attemptsData.data);
+      setInterviews(interviewsData);
+      setAttempts(attemptsData);
 
     };
 

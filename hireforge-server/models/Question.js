@@ -38,8 +38,22 @@ const questionSchema = new mongoose.Schema(
       },
     },
 
-    testCases: {
+    // testCases: {
+    //   type: [testCaseSchema],
+    //   validate: {
+    //     validator: function (value) {
+    //       if (this.type === "coding") {
+    //         return value.length > 0;
+    //       }
+    //       return true;
+    //     },
+    //         message: "Coding question must have at least one test case"
+
+    //   },
+    // },
+sampleTestCases: {
       type: [testCaseSchema],
+      default: [],
       validate: {
         validator: function (value) {
           if (this.type === "coding") {
@@ -47,11 +61,24 @@ const questionSchema = new mongoose.Schema(
           }
           return true;
         },
-            message: "Coding question must have at least one test case"
-
+        message: "Coding question must have at least one sample test case",
       },
     },
 
+    // Hidden from user (Submit)
+    hiddenTestCases: {
+      type: [testCaseSchema],
+      default: [],
+      validate: {
+        validator: function (value) {
+          if (this.type === "coding") {
+            return value.length > 0;
+          }
+          return true;
+        },
+        message: "Coding question must have at least one hidden test case",
+      },
+    },
     marks: {
       type: Number,
       required: true,

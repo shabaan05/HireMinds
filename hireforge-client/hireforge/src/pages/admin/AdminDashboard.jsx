@@ -7,7 +7,7 @@ import DashboardChart from "../../components/admin/dashboard/DashboardChart";
 import { getAdminStats } from "../../services/adminService";
 import { getInterviews } from "../../services/interviewService";
 import { getAllAttempts } from "../../services/adminService";
-
+import AdminNavbar from "../../components/admin/AdminNavbar";
 function AdminDashboard() {
 
   const [stats, setStats] = useState({});

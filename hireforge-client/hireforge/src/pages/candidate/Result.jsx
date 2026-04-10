@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import {
   startInterview,
   saveAnswer,
@@ -7,6 +8,7 @@ import {
   getResult,
   getUserAttempts
 } from "../../services/attemptService"; 
+import { getAttemptById } from "../../services/attemptService";
 const Result = () => {
   const { attemptId } = useParams();
 

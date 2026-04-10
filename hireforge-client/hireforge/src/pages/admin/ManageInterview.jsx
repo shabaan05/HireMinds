@@ -1,36 +1,30 @@
 import { useEffect, useState } from "react";
-import SearchBar from "../../components/admin/ManageInterviews/SearchBar";
-import InterviewTable from "../../components/admin/ManageInterviews/InterviewTable";
-
+import { useParams } from "react-router-dom";
+import { getInterviewById } from "../../services/interviewService";
+import InterviewDetails from "../../components/admin/ManageInterviews/InterviewDetails";
+import InterviewActions from "../../components/admin/ManageInterviews/InterviewActions";
 function ManageInterview() {
+  const { id } = useParams();
+  const [interview, setInterview] = useState(null);
 
-  const [interviews, setInterviews] = useState([]);
-  const [search, setSearch] = useState("");
-
- //..
-  const fetchInterviews = async () => {
-    const data = await getInterviews();
-    setInterviews(data.data);
+  const fetchInterview = async () => {
+    const data = await getInterviewById(id);
+    setInterview(data);
   };
 
   useEffect(() => {
-    fetchInterviews();
-  }, []);
+    fetchInterview();
+  }, [id]);
 
-
-  const filtered = interviews.filter((i) =>
-    i.title.toLowerCase().includes(search.toLowerCase())
-  );
+  if (!interview) return <p>Loading...</p>;
 
   return (
     <div>
+      <h2>Manage Interview</h2>
 
-      <h2>Manage Interviews</h2>
+      <InterviewDetails interview={interview} onRefresh={fetchInterview} />
 
-      <SearchBar value={search} onChange={setSearch} />
-
-      <InterviewTable interviews={filtered} refresh={fetchInterviews} />
-
+      <InterviewActions interviewId={id} />
     </div>
   );
 }

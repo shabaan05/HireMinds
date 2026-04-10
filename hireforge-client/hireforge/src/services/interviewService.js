@@ -33,7 +33,7 @@ export const toggleInterviewStatus = async (id) => {
 export const attachQuestions = async (interviewId, questions) => {
   const res = await axiosInstance.post(
     `/interviews/${interviewId}/questions`,
-    { questions }
+    { questions } // ✅ MATCH BACKEND
   );
   return res.data;
 };

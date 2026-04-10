@@ -1,75 +1,63 @@
-const { evaluateSubjective } = require("./aiService");
+const { executeCode } = require("./codeExecutionService");
 
-async function evaluateInterview(attempt) {
+const evaluateCode = async ({ code, language, testCases, totalMarks }) => {
+  let passedCount = 0;
+  let results = [];
 
-  let totalScore = 0;
-  let correctMCQ = 0;
-  let totalMCQ = 0;
+  for (let testCase of testCases) {
+    const { input, output: expectedOutput } = testCase;
 
-  for (let answer of attempt.answers) {
+    const result = await executeCode({
+      code,
+      language,
+      input,
+    });
 
-    const question = answer.questionId;
-
-    // MCQ
-    if (question.type === "mcq") {
-      totalMCQ++;
-
-      if (answer.selectedAnswer === question.correctAnswer) {
-        answer.isCorrect = true;
-        answer.obtainedMarks = question.marks;
-        totalScore += question.marks;
-        correctMCQ++;
-      }
+    // If runtime/compile error → stop immediately
+    if (result.error) {
+      return {
+        status: "runtime_error",
+        passedCount,
+        totalCount: testCases.length,
+        results,
+        obtainedMarks: 0,
+        error: result.error,
+      };
     }
 
-    // Coding
-    if (question.type === "coding") {
+    const actualOutput = result.output?.trim();
+    const expected = expectedOutput.trim();
 
-      let passed = 0;
+    const isPassed = actualOutput === expected;
 
-      for (let testCase of question.testCases) {
+    if (isPassed) passedCount++;
 
-        try {
-            //later improve 
-          const func = new Function("input", answer.codeSubmitted);
-          const output = func(testCase.input);
-
-          if (String(output).trim() === testCase.expectedOutput.trim()) {
-            passed++;
-          }
-
-        } catch (err) {}
-      }
-
-      const marks =
-        (passed / question.testCases.length) * question.marks;
-
-      answer.obtainedMarks = marks;
-      totalScore += marks;
-    }
-
-    // Subjective
-    if (question.type === "subjective") {
-
-      const aiScore = await evaluateSubjective(
-        question.questionText,
-        answer.subjectiveAnswer,
-        question.marks
-      );
-
-      answer.obtainedMarks = aiScore;
-      totalScore += aiScore;
-    }
+    results.push({
+      input,
+      expected,
+      actual: actualOutput,
+      passed: isPassed,
+    });
   }
 
-  const accuracy = totalMCQ
-    ? (correctMCQ / totalMCQ) * 100
-    : 0;
+  // Final status
+  const status =
+    passedCount === testCases.length ? "accepted" : "wrong_answer";
+
+  // Simple scoring
+  const obtainedMarks =
+    (passedCount / testCases.length) * totalMarks;
 
   return {
-    score: totalScore,
-    accuracy
+    status,
+    passedCount,
+    totalCount: testCases.length,
+    results,
+    obtainedMarks,
+    error: null,
   };
-}
+};
 
-module.exports = { evaluateInterview };
+module.exports = {
+  evaluateCode,
+};
