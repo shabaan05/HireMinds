@@ -11,11 +11,7 @@ const CandidateLayout = ({ children }) => {
      
      <Navbar />
 
-     
-
-
-      {/* Page Content */}
-      <main>
+          <main>
         <Outlet />
       </main>
 

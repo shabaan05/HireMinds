@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 
 
+
 const testCaseSchema = new mongoose.Schema({
   input: {
     type: String,
     required: true,
   },
-  expectedOutput: {
+  output: {
     type: String,
     required: true,
   },
@@ -37,48 +38,61 @@ const questionSchema = new mongoose.Schema(
         return this.type === "mcq";
       },
     },
-
-    // testCases: {
-    //   type: [testCaseSchema],
-    //   validate: {
-    //     validator: function (value) {
-    //       if (this.type === "coding") {
-    //         return value.length > 0;
-    //       }
-    //       return true;
-    //     },
-    //         message: "Coding question must have at least one test case"
-
-    //   },
-    // },
+//..
 sampleTestCases: {
-      type: [testCaseSchema],
-      default: [],
-      validate: {
-        validator: function (value) {
-          if (this.type === "coding") {
-            return value.length > 0;
-          }
-          return true;
-        },
-        message: "Coding question must have at least one sample test case",
-      },
+  type: [testCaseSchema],
+  default: [],
+  validate: {
+    validator: function (value) {
+      if (this.type === "coding") {
+        return value.length > 0;
+      }
+      return true;
     },
+  },
+},
 
-    // Hidden from user (Submit)
-    hiddenTestCases: {
-      type: [testCaseSchema],
-      default: [],
-      validate: {
-        validator: function (value) {
-          if (this.type === "coding") {
-            return value.length > 0;
-          }
-          return true;
-        },
-        message: "Coding question must have at least one hidden test case",
-      },
+hiddenTestCases: {
+  type: [testCaseSchema],
+  default: [],
+  validate: {
+    validator: function (value) {
+      if (this.type === "coding") {
+        return value.length > 0;
+      }
+      return true;
     },
+  },
+},
+   
+// sampleTestCases: {
+//       type: [testCaseSchema],
+//       default: [],
+//       validate: {
+//         validator: function (value) {
+//           if (this.type === "coding") {
+//             return value.length > 0;
+//           }
+//           return true;
+//         },
+//         message: "Coding question must have at least one sample test case",
+//       },
+//     },
+
+//     // Hidden from user (Submit)
+//     hiddenTestCases: {
+//       type: [testCaseSchema],
+//       default: [],
+//       validate: {
+//         validator: function (value) {
+//           if (this.type === "coding") {
+//             return value.length > 0;
+//           }
+//           return true;
+//         },
+//         message: "Coding question must have at least one hidden test case",
+//       },
+//     },
     marks: {
       type: Number,
       required: true,

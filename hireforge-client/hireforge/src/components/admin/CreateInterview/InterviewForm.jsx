@@ -13,7 +13,7 @@ function InterviewForm() {
   const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
-
+const [loading, setLoading] = useState(false);//added
   const { values, handleChange, resetForm } = useForm({
     title: "",
     description: "",
@@ -44,9 +44,9 @@ function InterviewForm() {
     if (Object.keys(newErrors).length > 0) return;
 
     try {
+  setLoading(true);
 
-      // const res = await createInterview(values);
-const res = await createInterview({
+  const res = await createInterview({
   ...values,
   duration: Number(values.duration) // 🔥 FIX HERE
 });
@@ -57,10 +57,16 @@ const res = await createInterview({
       navigate(`/admin/interviews/${interviewId}/questions`);
 
     } catch (err) {
-      console.error("Error creating interview", err);
-    }
-  };
+        toast({
+      title: "Error",
+      description: "Something went wrong",
+      variant: "destructive"
+    });
 
+  }finally {
+  setLoading(false);
+}
+  }
   return (
     <form onSubmit={handleSubmit}>
 
@@ -119,12 +125,12 @@ const res = await createInterview({
 
       </div>
 
-      <Button type="submit">
-        Create Interview
-      </Button>
+     <Button type="submit" disabled={loading}>
+  {loading ? "Creating..." : "Create Interview"}
+</Button>
 
     </form>
   );
-}
 
+}
 export default InterviewForm;

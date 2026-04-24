@@ -6,9 +6,9 @@ function AttemptItem({ attempt }) {
 
   return (
     <div style={{ marginBottom: "10px" }}>
-
-      <span>{attempt.interview}</span>
-
+ <span className="font-medium">
+        {attempt.interviewId?.title || "Untitled Interview"}
+      </span>
       <span style={{ marginLeft: "20px" }}>
         Score: {attempt.score}
       </span>
@@ -16,7 +16,7 @@ function AttemptItem({ attempt }) {
       <button
         style={{ marginLeft: "20px" }}
         onClick={() =>
-          navigate(`/attempt/${attempt.id}`)
+          navigate(`/candidate/attempts/${attempt._id}`)
         }
       >
         View

@@ -1,6 +1,6 @@
 import InterviewRow from "./InterviewRow";
 
-function InterviewTable({ interviews = [] }) { // ✅ default empty array
+function InterviewTable({ interviews = [] }) { 
 
   return (
     <table border="1">

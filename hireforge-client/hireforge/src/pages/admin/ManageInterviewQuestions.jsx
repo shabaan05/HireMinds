@@ -13,7 +13,7 @@ function ManageInterviewQuestions() {
 
   const [questions, setQuestions] = useState([]);
   const [selected, setSelected] = useState([]);
-
+const [loading, setLoading] = useState(false);
   const fetchQuestions = async () => {
     const data = await getQuestions();
     setQuestions(data); 
@@ -28,19 +28,22 @@ function ManageInterviewQuestions() {
 
  const handleAttach = async () => {
   if (selected.length === 0) {
-    alert("Select at least one question");
+    toast({
+  title: "Select at least one question"
+});
     return;
   }
 
   try {
-    console.log("Sending:", selected);
+    setLoading(true); 
 
 await attachQuestions(id, selected);
-    console.log("SUCCESS");
 
     navigate(`/admin/interviews/${id}/manage`);
   } catch (err) {
     console.error("ERROR:", err);
+  }finally {
+    setLoading(false); 
   }
 };
 
@@ -71,9 +74,10 @@ return questions.length === 0 ? (
       }
     />
 
-    <button onClick={handleAttach}>
-      Add Selected Questions
-    </button>
+    
+    <button onClick={handleAttach} disabled={loading}>
+  {loading ? "Adding..." : "Add Selected Questions"}
+</button>
   </div>
 );
 }

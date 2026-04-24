@@ -12,7 +12,11 @@ function InterviewRow({ interview }) {
       <td>
         <button
           onClick={() =>
-            navigate(`/admin/interviews/${interview._id}/manage`)
+            navigate(`/admin/interviews/${interview._id}/manage`,{
+              state: interview   
+
+            })
+
           }
         >
           Manage

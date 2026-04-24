@@ -16,16 +16,20 @@ const Instructions = () => {
   const [interview, setInterview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+  const [error, setError] = useState(null);
 
-  // ✅ Fetch Interview
+  // ================= FETCH =================
   useEffect(() => {
     const fetchInterview = async () => {
       try {
+        setLoading(true);
+
         const data = await getInterviewById(interviewId);
-        // console.log("res is",res)
-        setInterview(data); 
+        setInterview(data);
+
       } catch (err) {
-        console.error("Error fetching interview:", err);
+        console.error(err);
+        setError("Failed to load interview");
       } finally {
         setLoading(false);
       }
@@ -34,33 +38,49 @@ const Instructions = () => {
     fetchInterview();
   }, [interviewId]);
 
-  // ✅ Start Interview
+  // ================= START =================
   const handleStart = async () => {
     try {
+      if (starting) return; //  prevent double click
+
       setStarting(true);
 
       const res = await startInterview(interviewId);
-console.log("res",res)
-      const attemptId = res.data._id; 
 
-      navigate(`/candidate/attempt/${interviewId}?attemptId=${attemptId}`);
+      //  handle both cases safely
+      const attemptId = res._id || res.data?._id;
+
+      navigate(`/candidate/attempt/${attemptId}`);
+
     } catch (err) {
-      console.error("Error starting interview:", err);
+      console.error(err);
+      setError("Failed to start interview");
     } finally {
       setStarting(false);
     }
   };
 
-  // ✅ UI States
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (!interview) return <div className="p-6">Interview not found</div>;
+  // ================= UI =================
+  if (loading) return <div className="p-6">Loading interview...</div>;
+
+  if (error)
+    return <div className="p-6 text-red-500">{error}</div>;
+
+  if (!interview)
+    return <div className="p-6">Interview not found</div>;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto p-6 space-y-6">
+
       <InstructionsHeader interview={interview} />
       <InstructionsInfo interview={interview} />
       <InstructionsRules />
-      <StartInterviewButton onStart={handleStart} loading={starting} />
+
+      <StartInterviewButton
+        onStart={handleStart}
+        loading={starting}
+      />
+
     </div>
   );
 };

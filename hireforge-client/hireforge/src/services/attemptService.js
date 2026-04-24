@@ -29,7 +29,8 @@ export const saveAnswer = async (attemptId, data) => {
 // 📊 Get User Attempts
 export const getUserAttempts = async () => {
   const res = await api.get(`/attempts/user`);
-  return res.data.data;
+  console.log('service attempt', res)
+  return res.data.completedAttempts;
 };
 
 // 🧠 Submit Interview

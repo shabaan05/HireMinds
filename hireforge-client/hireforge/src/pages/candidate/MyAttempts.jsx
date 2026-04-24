@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserAttempts } from "../../services/attemptService";
 
-const History = () => {
+function MyAttempts() {
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +14,7 @@ const History = () => {
       try {
         setLoading(true);
 
-        const res = await getUserAttempts();
+        const res = await getUserAttempts(); 
         setAttempts(res);
 
       } catch (err) {
@@ -28,49 +28,46 @@ const History = () => {
     fetchAttempts();
   }, []);
 
-  if (loading) {
-    return <div className="p-6">Loading attempts...</div>;
-  }
+  if (loading) return <div className="p-6">Loading...</div>;
 
-  if (error) {
-    return <div className="p-6 text-red-500">{error}</div>;
-  }
+  if (error) return <div className="p-6 text-red-500">{error}</div>;
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
 
-      <h1 className="text-2xl font-bold">Your Attempts</h1>
+      <h1 className="text-2xl font-bold">My Attempts</h1>
 
       {attempts.length === 0 ? (
-        <p className="text-gray-500">No attempts yet</p>
+        <p>No attempts found</p>
       ) : (
         <div className="space-y-3">
-
           {attempts.map((attempt) => (
             <div
               key={attempt._id}
-              className="flex justify-between items-center border p-4 rounded hover:shadow transition"
+              className="flex justify-between items-center bg-white shadow p-4 rounded"
             >
 
+              {/* Interview Title */}
               <div>
-                <h2 className="font-semibold">
+                <p className="font-semibold">
                   {attempt.interviewId?.title || "Untitled"}
-                </h2>
-
+                </p>
                 <p className="text-sm text-gray-500">
                   {new Date(attempt.createdAt).toLocaleString()}
                 </p>
               </div>
 
+              {/* Score */}
               <div>
-                <p>
-                  Score: <span className="font-medium">
-                    {attempt.score} / {attempt.totalMarks}
-                  </span>
+                <p className="font-medium">
+                  Score: {attempt.score} / {attempt.totalMarks}
                 </p>
+              </div>
 
+              {/* Status */}
+              <div>
                 <span
-                  className={`text-sm px-2 py-1 rounded ${
+                  className={`px-2 py-1 rounded text-sm ${
                     attempt.status === "evaluated"
                       ? "bg-green-100 text-green-700"
                       : "bg-yellow-100 text-yellow-700"
@@ -80,23 +77,23 @@ const History = () => {
                 </span>
               </div>
 
+              {/* View Button */}
               <button
+                className="px-3 py-1 bg-blue-500 text-white rounded"
                 onClick={() =>
                   navigate(`/candidate/attempts/${attempt._id}`)
                 }
-                className="px-3 py-1 bg-blue-500 text-white rounded"
               >
                 View
               </button>
 
             </div>
           ))}
-
         </div>
       )}
 
     </div>
   );
-};
+}
 
-export default History;
+export default MyAttempts;

@@ -3,17 +3,23 @@ const asyncWrapper = require("../utils/asyncWrapper");
 const AppError = require("../utils/AppError");
 
 
-exports.createQuestion = asyncWrapper(async (req, res) => {
 
-  const question = await Question.create(req.body);
+exports.createQuestion = async (req, res) => {
+  try {
+    console.log("BODY:", req.body); // 👈 MUST PRINT
 
-  res.status(201).json({
-    success: true,
-    data: question
-  });
+    const question = await Question.create(req.body);
 
-});
+    res.status(201).json({
+      success: true,
+      data: question,
+    });
 
+  } catch (error) {
+    console.error("CREATE QUESTION ERROR:", error); // 👈 THIS IS KEY
+    res.status(500).json({ message: error.message });
+  }
+};
 
 exports.getQuestions = asyncWrapper(async (req, res) => {
 

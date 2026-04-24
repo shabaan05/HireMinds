@@ -1,33 +1,28 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getAttemptById } from "../../services/attemptService";
 import AttemptDetailsCard from "../../components/admin/attempts/AttemptDetailsCard";
 
 function AttemptDetails1() {
   const { id } = useParams();
-  const [attempt, setAttempt] = useState(null);
+  const location = useLocation();
+const [attempt, setAttempt] = useState(location.state?.attempt || null)
 
-
-  const fetchAttempt = async () => {
+const fetchAttempt = async () => {
   try {
-    console.log("Fetching attempt...");
-
     const data = await getAttemptById(id);
-
-    console.log("DATA RECEIVED:", data); // 🔥 MUST SHOW
-
-    setAttempt(data?.data || data);
-
+    setAttempt(data);
   } catch (err) {
-    console.error("ERROR FETCHING:", err); // 🔥 YOU WILL SEE ERROR HERE
+    console.error(err);
   }
 };
 
-  useEffect(() => {
-      console.log("Fetching attempt...");
-
+useEffect(() => {
+  if (!attempt) {
     fetchAttempt();
-  }, [id]);
+  }
+}, [id]);
 
 if (!attempt || Object.keys(attempt).length === 0) {
   return <p>Loading...</p>;

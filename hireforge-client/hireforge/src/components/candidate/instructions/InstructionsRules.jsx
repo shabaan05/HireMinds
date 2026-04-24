@@ -1,3 +1,5 @@
+//later scale it and add while creating interview 
+
 const InstructionsRules = () => {
   return (
     <div className="bg-gray-50 border rounded p-4 mb-6">

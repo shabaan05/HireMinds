@@ -3,7 +3,7 @@ const { executeCode } = require("../services/codeExecutionService");
 exports.runCode = async (req, res) => {
   try {
     const { code, language, input } = req.body;
-
+console.log("req body", req.body)
     // Basic validation
     if (!code || !language) {
       return res.status(400).json({

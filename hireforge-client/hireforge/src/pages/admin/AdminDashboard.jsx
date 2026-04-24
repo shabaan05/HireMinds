@@ -8,55 +8,79 @@ import { getAdminStats } from "../../services/adminService";
 import { getInterviews } from "../../services/interviewService";
 import { getAllAttempts } from "../../services/adminService";
 import AdminNavbar from "../../components/admin/AdminNavbar";
-function AdminDashboard() {
 
+function AdminDashboard() {
   const [stats, setStats] = useState({});
   const [attempts, setAttempts] = useState([]);
   const [interviews, setInterviews] = useState([]);
-useEffect(() => {
 
- const fetchData = async () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  try {
-    const statsRes = await getAdminStats();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-    setStats(statsRes); // ✅ will now run
-  } catch (err) {
-    console.error("Stats error:", err);
+        const [statsRes, attemptsRes, interviewsRes] = await Promise.all([
+          getAdminStats(),
+          getAllAttempts(),
+          getInterviews(),
+        ]);
+
+        setStats(statsRes);
+        setAttempts(attemptsRes);
+        setInterviews(interviewsRes);
+
+      } catch (err) {
+        console.error("Dashboard error:", err);
+        setError("Failed to load dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading dashboard...</p>;
   }
 
-  try {
-    const attemptsRes = await getAllAttempts();
-    setAttempts(attemptsRes);
-  } catch (err) {
-    console.error("Attempts error:", err);
+  if (error) {
+    return <p className="text-center text-red-500 mt-10">{error}</p>;
   }
+return (
+  <div className="p-6 space-y-6">
 
-  try {
-    const interviewsRes = await getInterviews();
-    setInterviews(interviewsRes);
-  } catch (err) {
-    console.error("Interviews error:", err);
-  }
-};
-fetchData();
-}, []);
-  return (
-    <div>
+    <h2 className="text-2xl font-bold">Admin Dashboard</h2>
 
-      <h2>Admin Dashboard</h2>
+    {/* STATS */}
+    <StatsSection stats={stats} />
 
-      <StatsSection stats={stats} />
+    {/*  TABLES SECTION */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <div style={{ display: "flex", gap: "20px" }}>
+      <div className="bg-white shadow rounded-lg p-4">
+        <h3 className="text-lg font-semibold mb-3">Recent Attempts</h3>
         <RecentAttemptsTable attempts={attempts} />
+      </div>
+
+      <div className="bg-white shadow rounded-lg p-4">
+        <h3 className="text-lg font-semibold mb-3">Recent Interviews</h3>
         <RecentInterviewsTable interviews={interviews} />
       </div>
 
-      <DashboardChart attempts={attempts} />
-
     </div>
-  );
+
+    {/*  CHART */}
+    <div className="bg-white shadow rounded-lg p-4">
+      <h3 className="text-lg font-semibold mb-3">Performance Overview</h3>
+      <DashboardChart attempts={attempts} />
+    </div>
+
+  </div>
+);
 }
 
 export default AdminDashboard;

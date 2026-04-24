@@ -5,16 +5,23 @@ import { useAttempt } from "../../../context/AttemptContext";
 import { useState } from "react";
 const QuestionRenderer = ({ question, answer, onAnswerChange }) => {
   const { code, setCode, input, setInput, isSubmitted } = useAttempt();
-  if (!question) return null;
+  if (!question || !question.type) {
+  console.log("INVALID QUESTION:", question);
+  return <div>Invalid question</div>;
+}
 
-  switch (question.type) {
-    case "mcq":
+switch ((question?.type || "").toLowerCase()){
+  case "mcq":
       return (
-        <MCQQuestion
+        <div className="relative z-10">
+ <MCQQuestion
           question={question}
           answer={answer}
           onAnswerChange={onAnswerChange}
         />
+  </div>
+
+       
       );
 
     case "subjective":
@@ -36,8 +43,10 @@ const QuestionRenderer = ({ question, answer, onAnswerChange }) => {
   input={input}
   setInput={setInput}
     isSubmitted={isSubmitted}
+  onAnswerChange={onAnswerChange}   
 
 />
+
       );
 
     default:

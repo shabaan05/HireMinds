@@ -25,19 +25,40 @@ const evaluateCode = async ({ code, language, testCases, totalMarks }) => {
       };
     }
 
-    const actualOutput = result.output?.trim();
-    const expected = expectedOutput.trim();
+    // const actualOutput = result.output?.trim();
+    // const expected = expectedOutput.trim();
 
-    const isPassed = actualOutput === expected;
+    // const isPassed = actualOutput === expected;
+const normalize = (str) =>
+  (str || "")
+    .toString()
+    .trim()
+    .replace(/\r/g, "")        // remove \r
+    .replace(/\n/g, "")        // remove \n
+    .replace(/\s+/g, " ");     // normalize spaces
+
+const actual = normalize(result.output);
+const expected = normalize(expectedOutput);
+
+console.log("EXPECTED:", expected);
+console.log("ACTUAL:", actual);
+
+const isPassed = actual === expected;
 
     if (isPassed) passedCount++;
 
+    // results.push({
+    //   input,
+    //   expected,
+    //   actual: actualOutput,
+    //   passed: isPassed,
+    // });
     results.push({
-      input,
-      expected,
-      actual: actualOutput,
-      passed: isPassed,
-    });
+  input,
+  expected,
+  actual,
+  passed: isPassed,
+});
   }
 
   // Final status
@@ -45,8 +66,10 @@ const evaluateCode = async ({ code, language, testCases, totalMarks }) => {
     passedCount === testCases.length ? "accepted" : "wrong_answer";
 
   // Simple scoring
-  const obtainedMarks =
-    (passedCount / testCases.length) * totalMarks;
+ const obtainedMarks =
+  testCases.length > 0
+    ? (passedCount / testCases.length) * totalMarks
+    : 0;
 
   return {
     status,
@@ -57,7 +80,82 @@ const evaluateCode = async ({ code, language, testCases, totalMarks }) => {
     error: null,
   };
 };
+//..
+
+const evaluateInterview = async (attempt) => {
+  let totalScore = 0;
+  let totalMarks = 0;
+
+  for (let ans of attempt.answers) {
+    const question = ans.questionId;
+
+    if (!question) continue;
+
+    totalMarks += question.marks;
+
+    //  MCQ
+    if (question.type === "mcq") {
+      if (ans.selectedAnswer === question.correctAnswer) {
+        ans.isCorrect = true;
+        ans.obtainedMarks = question.marks;
+        totalScore += question.marks;
+      } else {
+        ans.isCorrect = false;
+        ans.obtainedMarks = 0;
+      }
+    }
+
+// CODING (MAIN FIX)
+//   if (question.type === "coding") {
+//   const allTestCases = [
+//     ...(question.sampleTestCases || []),
+//     ...(question.hiddenTestCases || []),
+//   ];
+
+//   const result = await evaluateCode({
+//     code: ans.codeSubmitted,
+//     language: "javascript",
+//     testCases: allTestCases,
+//     totalMarks: question.marks,
+//   });
+
+//   ans.isCorrect = result.status === "accepted";
+//   ans.obtainedMarks = result.obtainedMarks;
+//   ans.results = result.results;
+
+//   totalScore += result.obtainedMarks || 0;
+// }
+if (question.type === "coding") {
+  const result = await evaluateCode({
+    code: ans.codeSubmitted,
+    language: "javascript",
+    testCases: [
+      ...(question.sampleTestCases || []),
+      ...(question.hiddenTestCases || []),
+    ],
+    totalMarks: question.marks,
+  });
+
+  ans.isCorrect = result.status === "accepted";
+  ans.obtainedMarks = result.obtainedMarks;
+  ans.results = result.results;
+
+  totalScore += result.obtainedMarks || 0;
+}
+  }
+
+  const accuracy =
+    totalMarks > 0 ? (totalScore / totalMarks) * 100 : 0;
+
+  return {
+    score: totalScore,
+    totalMarks,
+    accuracy,
+    answers: attempt.answers,
+  };
+};
+
 
 module.exports = {
-  evaluateCode,
+  evaluateCode,evaluateInterview
 };

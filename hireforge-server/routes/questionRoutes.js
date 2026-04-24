@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const {
   createQuestion,
@@ -9,11 +10,11 @@ const {
   getQuestionById
 } = require("../controllers/questionController");
 
-router.post("/", createQuestion);
+router.post("/",authMiddleware, createQuestion);
 router.get("/", getQuestions);
 router.get("/:id", getQuestionById);
 
-router.put("/:id", updateQuestion);
-router.delete("/:id", deleteQuestion);
+router.put("/:id",authMiddleware, updateQuestion);
+router.delete("/:id",authMiddleware, deleteQuestion);
 
 module.exports = router;

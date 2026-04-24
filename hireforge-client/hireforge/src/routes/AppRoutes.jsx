@@ -10,63 +10,136 @@ import CreateInterview from "../pages/admin/CreateInterview";
 import ManageInterviewQuestions from "../pages/admin/ManageInterviewQuestions";
 import InterviewList from "../pages/admin/InterviewList";
 import Instructions from "../pages/candidate/Instructions";
+import Interviews from "../pages/candidate/Interviews";
 import AttemptInterview from "../pages/candidate/AttemptInterview";
 import Result from "../pages/candidate/Result";
 import History from "../pages/candidate/History";
-import AttemptDetails from "../pages/candidate/AttemptDetails";
 import Dashboard from "../pages/candidate/Dashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import QuestionBank from "../pages/admin/QuestionBank";
 import Attempts from "../pages/admin/Attempts";
 import AttemptDetails1 from "../pages/admin/AttemptDetails1";
+import AttemptDetails from "../pages/candidate/AttemptDetails";
+import MyAttempts from "../pages/candidate/MyAttempts";
 import { AttemptProvider } from "../context/AttemptContext";
+// const AppRoutes = () => {
+//   return (
+//     <Routes>
+
+//       {/* Public Routes */}
+//       <Route path="/login" element={<Login />} />
+//       <Route path="/register" element={<Register />} />
+//       <Route path="/verify-otp" element={<VerifyOtp />} />
+
+//       {/* Candidate Routes with Layout */}
+//       <Route path="/candidate" element={<CandidateLayout />}>
+//         <Route path="dashboard" element={<Dashboard />} />
+//                 <Route path="MyAttempts" element={<MyAttempts />} />
+//                 <Route path="profile" element={<Profile />} />
+//                 <Route path="interviews" element={<Interviews />} />
+
+//                 <Route path="attempts/:attemptId" element={<AttemptDetails />} />
+
+//           <Route path="profile" element={<Profile />} />
+//          <Route path="interviews/instructions/:interviewId" element={<Instructions />} />
+// <Route path="attempt/:attemptId"  element={
+//     <AttemptProvider>
+//       <AttemptInterview />
+//     </AttemptProvider>
+//   }
+// />
+
+
+// <Route
+//   path="attempt-details/:attemptId"
+//   element={<AttemptDetails />}
+// />
+// <Route
+//   path="history"
+//   element={<History />}
+// />
+// <Route path="result/:attemptId" element={<Result />}
+// />
+// {/* ..........-----..................----....... */}
+//  </Route>
+
+//       {/* Admin Routes */}
+//       <Route path="/admin" element={<AdminLayout />}>
+
+//        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+//       <Route path="/admin/interviews" element={<InterviewList />} />
+//       <Route path="/admin/attempts" element={<Attempts />} />
+// <Route path="/admin/attempts/:id" element={<AttemptDetails1 />} />
+//       <Route path="/admin/interviews/create" element={<CreateInterview />} />
+//       <Route path="/admin/interviews/:id/manage" element={<ManageInterview />} />
+//       <Route path="/admin/interviews/:id/questions" element={<ManageInterviewQuestions />}  />
+// <Route path="/admin/questions" element={<QuestionBank />} />
+// </Route>
+//     </Routes>
+//   );
+// };
+
+// export default AppRoutes;
+
+
 const AppRoutes = () => {
   return (
     <Routes>
 
-      {/* Public Routes */}
+      {/* ================= PUBLIC ================= */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
 
-      {/* Candidate Routes with Layout */}
+      {/* ================= CANDIDATE ================= */}
       <Route path="/candidate" element={<CandidateLayout />}>
+
         <Route path="dashboard" element={<Dashboard />} />
-          <Route path="profile" element={<Profile />} />
-         <Route path="interviews/instructions/:interviewId" element={<Instructions />} />
-<Route path="attempt/:interviewId"  element={
-    <AttemptProvider>
-      <AttemptInterview />
-    </AttemptProvider>
-  }
-/>
+        <Route path="profile" element={<Profile />} />
+        <Route path="interviews" element={<Interviews />} />
 
+        {/* 🔥 FIX: lowercase */}
+        <Route path="history" element={<History />} />
 
-<Route
-  path="attempt-details/:attemptId"
-  element={<AttemptDetails />}
-/>
-<Route
-  path="history"
-  element={<History />}
-/>
-<Route path="result/:attemptId" element={<Result />}
-/>
-{/* ........................................................................... */}
- </Route>
+        {/* 🔥 SINGLE SOURCE OF TRUTH */}
+        <Route path="attempt/:attemptId" element={
+          <AttemptProvider>
+            <AttemptInterview />
+          </AttemptProvider>
+        } />
 
-      {/* Admin Routes */}
+        {/* 🔥 Details */}
+        <Route path="attempts/:attemptId" element={<AttemptDetails />} />
+
+        {/* Instructions */}
+        <Route
+          path="interviews/instructions/:interviewId"
+          element={<Instructions />}
+        />
+
+        {/* Result */}
+        <Route path="result/:attemptId" element={<Result />} />
+
+      </Route>
+
+      {/* ================= ADMIN ================= */}
       <Route path="/admin" element={<AdminLayout />}>
 
-       <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/admin/interviews" element={<InterviewList />} />
-      <Route path="/admin/attempts" element={<Attempts />} />
-<Route path="/admin/attempts/:id" element={<AttemptDetails1 />} />
-      <Route path="/admin/interviews/create" element={<CreateInterview />} />
-      <Route path="/admin/interviews/:id/manage" element={<ManageInterview />} />
-      <Route path="/admin/interviews/:id/questions" element={<ManageInterviewQuestions />}  />
-<Route path="/admin/questions" element={<QuestionBank />} />
-</Route>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="interviews" element={<InterviewList />} />
+        <Route path="attempts" element={<Attempts />} />
+
+        <Route path="attempts/:id" element={<AttemptDetails1 />} />
+
+        <Route path="interviews/create" element={<CreateInterview />} />
+
+        <Route path="interviews/:id/manage" element={<ManageInterview />} />
+        <Route path="interviews/:id/questions" element={<ManageInterviewQuestions />} />
+
+        <Route path="questions" element={<QuestionBank />} />
+
+      </Route>
+
     </Routes>
   );
 };

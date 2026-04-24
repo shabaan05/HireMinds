@@ -5,14 +5,20 @@ const MCQQuestion = ({ question, answer, onAnswerChange }) => {
 
       <div className="mt-2 space-y-2">
         {question.options.map((opt, index) => (
-          <label key={index} className="block">
+          <label key={index} className="flex items-center gap-2 cursor-pointer"
+>
             <input
               type="radio"
-              name={question._id}
-              checked={answer === opt}
-              onChange={() => onAnswerChange(question._id, opt)}
+              name={`question-${question._id}`} // ✅ better grouping
+                checked={answer?.selectedAnswer === opt} // ✅ FIXED
+
+              onChange={() =>
+                onAnswerChange(question._id, {
+                  selectedAnswer: opt, // 🔥 FIXED
+                })
+              }
             />
-            <span className="ml-2">{opt}</span>
+            <span>{opt}</span>
           </label>
         ))}
       </div>

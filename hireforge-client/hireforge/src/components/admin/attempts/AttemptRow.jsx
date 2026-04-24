@@ -14,7 +14,10 @@ function AttemptRow({ attempt }) {
       <td>
         <button
           onClick={() =>
-            navigate(`/admin/attempts/${attempt._id}`)
+            navigate(`/admin/attempts/${attempt._id}`,{
+                              state: attempt, 
+
+            })
           }
         >
           View

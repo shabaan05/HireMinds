@@ -12,17 +12,12 @@ console.log("inetrview" ,interview);//test
       <p>Duration: {interview.duration} minutes</p>
 
       <button
-        // onClick={() =>
-        //   navigate(`/interviews/instructions/${interview._id}`)
-        // }
+      
         onClick={() => {
   if (!interview?._id) {
-    console.log("Missing ID:", interview);
     return;
   }
-    console.log("CLICKED");
-console.log("FULL OBJECT:", interview);
-  console.log("ID:", interview?._id);
+    
 
   navigate(`/candidate/interviews/instructions/${interview._id}`);
 }}

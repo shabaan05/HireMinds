@@ -10,17 +10,14 @@ import { getUserAttempts } from "../../services/attemptService";
 
 function Dashboard() {
 
-  const [interviews, setInterviews] = useState([]);
   const [attempts, setAttempts] = useState([]);
 
   useEffect(() => {
 
     const fetchData = async () => {
 
-      const interviewsData = await getInterviews();
       const attemptsData = await getUserAttempts();
 
-      setInterviews(interviewsData);
       setAttempts(attemptsData);
 
     };
@@ -36,7 +33,6 @@ function Dashboard() {
 
       <StatsSection attempts={attempts} />
 
-      <AvailableInterviews interviews={interviews} />
 
       <RecentAttempts attempts={attempts} />
 
