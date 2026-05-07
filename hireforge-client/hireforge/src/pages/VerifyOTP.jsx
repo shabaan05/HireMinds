@@ -43,29 +43,69 @@ console.log(res);
     return <p>Invalid access. Please login again.</p>;
   }
 
-  return (
-    <div>
-      <h2>Verify OTP</h2>
+return (
+  <div className="min-h-screen bg-gray-950 flex items-center justify-center px-6">
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          {...register("otp", { required: "OTP is required" })}
-        />
+    <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-xl">
 
-        {errors.otp && (
-          <p style={{ color: "red" }}>{errors.otp.message}</p>
-        )}
+      {/* TITLE */}
+      <h2 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Verify OTP
+      </h2>
 
-        <br /><br />
+      <p className="text-gray-400 text-center mb-8">
+        Enter the verification code sent to your email
+      </p>
 
-        <button type="submit" disabled={isSubmitting}>
+      {/* FORM */}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+      >
+
+        {/* OTP INPUT */}
+        <div>
+
+          <label className="block text-sm text-gray-400 mb-2">
+            OTP Code
+          </label>
+
+          <input
+            type="text"
+            placeholder="Enter OTP"
+            {...register("otp", {
+              required: "OTP is required",
+            })}
+            className="w-full px-4 py-3 rounded-xl bg-gray-950 border border-gray-700
+                       focus:outline-none focus:ring-2 focus:ring-purple-500
+                       text-gray-100 placeholder-gray-500 transition text-center tracking-[0.3em]"
+          />
+
+          {errors.otp && (
+            <p className="text-red-400 text-sm mt-2">
+              {errors.otp.message}
+            </p>
+          )}
+
+        </div>
+
+        {/* BUTTON */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full py-3 rounded-xl font-medium text-white
+                     bg-gradient-to-r from-blue-500 to-purple-600
+                     hover:scale-[1.02] transition disabled:opacity-50"
+        >
           {isSubmitting ? "Verifying..." : "Verify OTP"}
         </button>
+
       </form>
+
     </div>
-  );
+
+  </div>
+);
 };
 
 export default VerifyOTP;

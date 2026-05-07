@@ -23,64 +23,7 @@ import AttemptDetails from "../pages/candidate/AttemptDetails";
 import ProfileAdmin from "../pages/admin/ProfileAdmin";
 import MyAttempts from "../pages/candidate/MyAttempts";
 import { AttemptProvider } from "../context/AttemptContext";
-// const AppRoutes = () => {
-//   return (
-//     <Routes>
-
-//       {/* Public Routes */}
-//       <Route path="/login" element={<Login />} />
-//       <Route path="/register" element={<Register />} />
-//       <Route path="/verify-otp" element={<VerifyOtp />} />
-
-//       {/* Candidate Routes with Layout */}
-//       <Route path="/candidate" element={<CandidateLayout />}>
-//         <Route path="dashboard" element={<Dashboard />} />
-//                 <Route path="MyAttempts" element={<MyAttempts />} />
-//                 <Route path="profile" element={<Profile />} />
-//                 <Route path="interviews" element={<Interviews />} />
-
-//                 <Route path="attempts/:attemptId" element={<AttemptDetails />} />
-
-//           <Route path="profile" element={<Profile />} />
-//          <Route path="interviews/instructions/:interviewId" element={<Instructions />} />
-// <Route path="attempt/:attemptId"  element={
-//     <AttemptProvider>
-//       <AttemptInterview />
-//     </AttemptProvider>
-//   }
-// />
-
-
-// <Route
-//   path="attempt-details/:attemptId"
-//   element={<AttemptDetails />}
-// />
-// <Route
-//   path="history"
-//   element={<History />}
-// />
-// <Route path="result/:attemptId" element={<Result />}
-// />
-// {/* ..........-----..................----....... */}
-//  </Route>
-
-//       {/* Admin Routes */}
-//       <Route path="/admin" element={<AdminLayout />}>
-
-//        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-//       <Route path="/admin/interviews" element={<InterviewList />} />
-//       <Route path="/admin/attempts" element={<Attempts />} />
-// <Route path="/admin/attempts/:id" element={<AttemptDetails1 />} />
-//       <Route path="/admin/interviews/create" element={<CreateInterview />} />
-//       <Route path="/admin/interviews/:id/manage" element={<ManageInterview />} />
-//       <Route path="/admin/interviews/:id/questions" element={<ManageInterviewQuestions />}  />
-// <Route path="/admin/questions" element={<QuestionBank />} />
-// </Route>
-//     </Routes>
-//   );
-// };
-
-// export default AppRoutes;
+import Home from "../pages/Home";
 
 
 const AppRoutes = () => {
@@ -91,6 +34,8 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/" element={<Home />} />
+
 
       {/* ================= CANDIDATE ================= */}
       <Route path="/candidate" element={<CandidateLayout />}>
