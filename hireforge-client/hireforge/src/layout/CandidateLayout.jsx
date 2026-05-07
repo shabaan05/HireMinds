@@ -7,17 +7,17 @@ const CandidateLayout = ({ children }) => {
 
 
   return (
-    <div>
-     
-     <Navbar />
+    <div className="bg-gray-950 min-h-screen text-gray-100">
 
-          <main>
-        <Outlet />
-      </main>
+    <Navbar />
 
+    <main className="min-h-[80vh]">
+      <Outlet />
+    </main>
 
-     <Footer />
-    </div>
+    <Footer />
+
+  </div>
   );
 };
 

@@ -99,8 +99,18 @@ const validate = () => {
   return Object.keys(err).length === 0;
 };
 
-    return (
-  <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4">
+return (
+  <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 bg-white p-6 rounded-2xl shadow-sm border">
+
+    {/* HEADER */}
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800">
+        Create Question
+      </h2>
+      <p className="text-gray-500 text-sm">
+        Add a new question to the question bank
+      </p>
+    </div>
 
     {/* QUESTION */}
     <FormField
@@ -111,76 +121,89 @@ const validate = () => {
       error={errors.questionText}
     />
 
-    {/* TYPE */}
-    <div>
-      <label className="block text-sm font-medium mb-1">Type</label>
-      <select
-        name="type"
-        value={form.type}
-        onChange={handleChange}
-        className="w-full border rounded-md px-3 py-2"
-      >
-        <option value="mcq">MCQ</option>
-        <option value="coding">Coding</option>
-        <option value="subjective">Subjective</option>
-      </select>
+    {/* TYPE + DIFFICULTY (GRID) */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      {/* TYPE */}
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-700">Type</label>
+        <select
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="mcq">MCQ</option>
+          <option value="coding">Coding</option>
+          <option value="subjective">Subjective</option>
+        </select>
+      </div>
+
+      {/* DIFFICULTY */}
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-700">Difficulty</label>
+        <select
+          name="difficulty"
+          value={form.difficulty}
+          onChange={handleChange}
+          className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+
     </div>
 
-    {/* DIFFICULTY */}
-    <div>
-      <label className="block text-sm font-medium mb-1">Difficulty</label>
-      <select
-        name="difficulty"
-        value={form.difficulty}
+    {/* MARKS + TOPIC */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <FormField
+        label="Marks"
+        name="marks"
+        type="number"
+        value={form.marks}
         onChange={handleChange}
-        className="w-full border rounded-md px-3 py-2"
-      >
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-      </select>
+        error={errors.marks}
+      />
+
+      <FormField
+        label="Topic"
+        name="topic"
+        value={form.topic}
+        onChange={handleChange}
+      />
+
     </div>
-
-    {/* MARKS */}
-    <FormField
-      label="Marks"
-      name="marks"
-      type="number"
-      value={form.marks}
-      onChange={handleChange}
-      error={errors.marks}
-    />
-
-    {/* TOPIC */}
-    <FormField
-      label="Topic"
-      name="topic"
-      value={form.topic}
-      onChange={handleChange}
-    />
 
     {/* MCQ */}
     {form.type === "mcq" && (
-      <MCQOptions form={form} setForm={setForm} errors={errors} />
+      <div className="bg-gray-50 rounded-xl p-4 border">
+        <MCQOptions form={form} setForm={setForm} errors={errors} />
+      </div>
     )}
 
     {/* CODING */}
     {form.type === "coding" && (
-      <CodingTestCases form={form} setForm={setForm} errors={errors} />
+      <div className="bg-gray-50 rounded-xl p-4 border">
+        <CodingTestCases form={form} setForm={setForm} errors={errors} />
+      </div>
     )}
 
-    {/* SUBMIT BUTTON */}
-    <button
-      type="submit"
-      disabled={loading}
-      className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-    >
-      {loading ? "Creating..." : "Create Question"}
-    </button>
+    {/* SUBMIT */}
+    <div className="pt-2">
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg font-medium hover:opacity-90 transition disabled:opacity-50"
+      >
+        {loading ? "Creating..." : "Create Question"}
+      </button>
+    </div>
 
   </form>
-);
-    
+);    
   }
 
   export default QuestionForm;

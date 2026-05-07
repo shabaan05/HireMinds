@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-
+import ProfileAdmin from "../../pages/admin/ProfileAdmin";
 function AdminNavbar() {
   const navigate = useNavigate();
 
@@ -8,33 +8,93 @@ function AdminNavbar() {
     navigate("/login");
   };
 
-  return (
-    <nav style={styles.nav}>
-      <h2 style={styles.logo}>Admin Panel</h2>
+return (
+  <nav className="bg-white border-b shadow-sm px-6 py-4 flex justify-between items-center">
 
-      <div style={styles.links}>
-        <NavLink to="/admin/dashboard" style={styles.link}>
-          Dashboard
-        </NavLink>
+    {/* LOGO */}
+    <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      Admin Panel
+    </h2>
 
-        <NavLink to="/admin/interviews" style={styles.link}>
-          Interviews
-        </NavLink>
+    {/* LINKS */}
+    <div className="flex items-center gap-6">
 
-        <NavLink to="/admin/questions" style={styles.link}>
-          Questions
-        </NavLink>
+      <NavLink
+        to="/admin/dashboard"
+        className={({ isActive }) =>
+          `text-sm font-medium ${
+            isActive
+              ? "text-blue-600"
+              : "text-gray-600 hover:text-blue-600"
+          } transition`
+        }
+      >
+        Dashboard
+      </NavLink>
 
-        <NavLink to="/admin/attempts" style={styles.link}>
-          Attempts
-        </NavLink>
+      <NavLink
+        to="/admin/interviews"
+        className={({ isActive }) =>
+          `text-sm font-medium ${
+            isActive
+              ? "text-blue-600"
+              : "text-gray-600 hover:text-blue-600"
+          } transition`
+        }
+      >
+        Interviews
+      </NavLink>
+      <NavLink
+        to="/admin/profile"
+        className={({ isActive }) =>
+          `text-sm font-medium ${
+            isActive
+              ? "text-blue-600"
+              : "text-gray-600 hover:text-blue-600"
+          } transition`
+        }
+      >
+        Profile
+      </NavLink>
 
-        <button onClick={handleLogout} style={styles.logout}>
-          Logout
-        </button>
-      </div>
-    </nav>
-  );
+      <NavLink
+        to="/admin/questions"
+        className={({ isActive }) =>
+          `text-sm font-medium ${
+            isActive
+              ? "text-blue-600"
+              : "text-gray-600 hover:text-blue-600"
+          } transition`
+        }
+      >
+        Questions
+      </NavLink>
+
+      <NavLink
+        to="/admin/attempts"
+        className={({ isActive }) =>
+          `text-sm font-medium ${
+            isActive
+              ? "text-blue-600"
+              : "text-gray-600 hover:text-blue-600"
+          } transition`
+        }
+      >
+        Attempts
+      </NavLink>
+
+      {/* LOGOUT BUTTON */}
+      <button
+        onClick={handleLogout}
+        className="ml-4 px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </nav>
+);
 }
 
 const styles = {

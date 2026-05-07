@@ -464,10 +464,18 @@ const AttemptInterview = () => {
 
         setAnswers(restoredAnswers);
 
-        const interview = await getInterviewById(
-          attemptData.interviewId._id
-        );
+        // const interview = await getInterviewById(
+        //   attemptData.interviewId._id
+        // );
+// const interview = await getInterviewById(
+//   attemptData.interviewId
+// );
+const interviewId =
+  typeof attemptData.interviewId === "object"
+    ? attemptData.interviewId._id
+    : attemptData.interviewId;
 
+const interview = await getInterviewById(interviewId);
         setQuestions(interview.questions);
 
         // Initialize code editor safely

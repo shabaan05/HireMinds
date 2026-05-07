@@ -69,20 +69,49 @@ const Instructions = () => {
   if (!interview)
     return <div className="p-6">Interview not found</div>;
 
-  return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
+return (
+  <div className="max-w-4xl mx-auto p-6 space-y-6 text-gray-100">
 
-      <InstructionsHeader interview={interview} />
-      <InstructionsInfo interview={interview} />
-      <InstructionsRules />
+    {/* HEADER */}
+    <div className="text-center">
+      <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Interview Instructions
+      </h1>
+      <p className="text-gray-400 text-sm mt-1">
+        Please read carefully before starting
+      </p>
+    </div>
 
-      <StartInterviewButton
-        onStart={handleStart}
-        loading={starting}
-      />
+    {/* MAIN CARD */}
+    <div className="bg-gray-900/70 backdrop-blur border border-gray-800 rounded-2xl p-6 space-y-6">
+
+      {/* HEADER */}
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
+        <InstructionsHeader interview={interview} />
+      </div>
+
+      {/* INFO */}
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
+        <InstructionsInfo interview={interview} />
+      </div>
+
+      {/* RULES */}
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
+        <InstructionsRules />
+      </div>
+
+      {/* BUTTON */}
+      <div className="pt-2 text-center">
+        <StartInterviewButton
+          onStart={handleStart}
+          loading={starting}
+        />
+      </div>
 
     </div>
-  );
+
+  </div>
+);
 };
 
 export default Instructions;

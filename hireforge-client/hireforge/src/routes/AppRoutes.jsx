@@ -20,6 +20,7 @@ import QuestionBank from "../pages/admin/QuestionBank";
 import Attempts from "../pages/admin/Attempts";
 import AttemptDetails1 from "../pages/admin/AttemptDetails1";
 import AttemptDetails from "../pages/candidate/AttemptDetails";
+import ProfileAdmin from "../pages/admin/ProfileAdmin";
 import MyAttempts from "../pages/candidate/MyAttempts";
 import { AttemptProvider } from "../context/AttemptContext";
 // const AppRoutes = () => {
@@ -128,7 +129,7 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="interviews" element={<InterviewList />} />
         <Route path="attempts" element={<Attempts />} />
-
+<Route path="profile" element={<ProfileAdmin />} />
         <Route path="attempts/:id" element={<AttemptDetails1 />} />
 
         <Route path="interviews/create" element={<CreateInterview />} />

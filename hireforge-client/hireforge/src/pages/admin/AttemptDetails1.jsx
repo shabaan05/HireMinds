@@ -23,16 +23,37 @@ useEffect(() => {
     fetchAttempt();
   }
 }, [id]);
-
+// LOADING
 if (!attempt || Object.keys(attempt).length === 0) {
-  return <p>Loading...</p>;
-}
   return (
-    <div>
-      <h2>Attempt Details</h2>
-      <AttemptDetailsCard attempt={attempt} />
+    <div className="flex items-center justify-center h-[60vh]">
+      <p className="text-gray-500 text-lg animate-pulse">
+        Loading attempt...
+      </p>
     </div>
   );
+}
+
+return (
+  <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+
+    {/* HEADER */}
+    <div>
+      <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        Attempt Details
+      </h2>
+      <p className="text-gray-500 mt-1">
+        Review candidate performance and answers
+      </p>
+    </div>
+
+    {/* CARD */}
+    <div className="bg-white rounded-2xl shadow-sm border p-6">
+      <AttemptDetailsCard attempt={attempt} />
+    </div>
+
+  </div>
+);
 }
 
 export default AttemptDetails1;

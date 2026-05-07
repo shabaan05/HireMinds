@@ -6,8 +6,8 @@ import { createInterview } from "../../../services/interviewService";
 
 import Input from "./Input";
 import Textarea from "./Textarea";
-import Button from "./Button";
-
+// import Button from "./Button";
+import Button from "./Button"
 function InterviewForm() {
 
   const navigate = useNavigate();
@@ -67,70 +67,99 @@ const [loading, setLoading] = useState(false);//added
   setLoading(false);
 }
   }
+
   return (
-    <form onSubmit={handleSubmit}>
+  <form onSubmit={handleSubmit} className="space-y-6">
+
+    {/* TITLE */}
+    <div className="space-y-1">
+      <label className="text-sm font-medium text-gray-700">
+        Title
+      </label>
 
       <Input
-        label="Title"
         name="title"
         value={values.title}
         onChange={handleChange}
+        placeholder="Enter interview title"
+        className="w-full"
       />
 
       {errors.title && (
-        <p style={{ color: "red", fontSize: "12px" }}>
-          {errors.title}
-        </p>
+        <p className="text-red-500 text-xs">{errors.title}</p>
       )}
+    </div>
+
+    {/* DESCRIPTION */}
+    <div className="space-y-1">
+      <label className="text-sm font-medium text-gray-700">
+        Description
+      </label>
 
       <Textarea
-        label="Description"
         name="description"
         value={values.description}
         onChange={handleChange}
+        placeholder="Enter description"
+        className="w-full"
       />
 
       {errors.description && (
-        <p style={{ color: "red", fontSize: "12px" }}>
-          {errors.description}
-        </p>
+        <p className="text-red-500 text-xs">{errors.description}</p>
       )}
+    </div>
+
+    {/* DURATION */}
+    <div className="space-y-1">
+      <label className="text-sm font-medium text-gray-700">
+        Duration (minutes)
+      </label>
 
       <Input
-        label="Duration (minutes)"
         name="duration"
         value={values.duration}
         onChange={handleChange}
+        placeholder="e.g. 30"
+        className="w-full"
       />
 
       {errors.duration && (
-        <p style={{ color: "red", fontSize: "12px" }}>
-          {errors.duration}
-        </p>
+        <p className="text-red-500 text-xs">{errors.duration}</p>
       )}
+    </div>
 
-      <div>
+    {/* EXPERIENCE LEVEL */}
+    <div className="space-y-1">
+      <label className="text-sm font-medium text-gray-700">
+        Experience Level
+      </label>
 
-        <label>Experience Level</label>
+      <select
+        name="experienceLevel"
+        value={values.experienceLevel}
+        onChange={handleChange}
+        className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="Junior">Junior</option>
+        <option value="Mid">Mid</option>
+        <option value="Senior">Senior</option>
+      </select>
+    </div>
 
-        <select
-          name="experienceLevel"
-          value={values.experienceLevel}
-          onChange={handleChange}
-        >
-          <option value="Junior">Junior</option>
-          <option value="Mid">Mid</option>
-          <option value="Senior">Senior</option>
-        </select>
+    {/* SUBMIT BUTTON */}
+    <div className="pt-2">
+      <Button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-2 rounded-lg hover:opacity-90 transition"
+      >
+        {loading ? "Creating..." : "Create Interview"}
+      </Button>
+      
 
-      </div>
+    </div>
 
-     <Button type="submit" disabled={loading}>
-  {loading ? "Creating..." : "Create Interview"}
-</Button>
-
-    </form>
-  );
-
+  </form>
+);
 }
 export default InterviewForm;

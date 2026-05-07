@@ -51,7 +51,6 @@ exports.login = async (req, res) => {
     // 🔐 If 2FA enabled → generate OTP
     if (user.twoFactorEnabled) {
       const otp = generateOTP();
-      // const otp = generateOTP().toString();
 
 
 const hashedOtp = await bcrypt.hash(otp, 10);

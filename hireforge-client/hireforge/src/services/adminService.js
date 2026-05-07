@@ -6,10 +6,21 @@ export const getAdminStats = async () => {
 
   return res.data.data;
 };
-//admin route
+
+
 export const getAllAttempts = async () => {
   const res = await axiosInstance.get("/admin");
-    console.log("DATA:", res); // 🔥 ADD THIS
+    console.log("DATA:", res); 
 
   return res.data.data;
+};
+
+export const getAdminProfile = async () => {
+  const res = await axiosInstance.get("/admin/profile");
+  return res.data;
+};
+
+export const updateAdminProfile = async (data) => {
+  const res = await axiosInstance.put("/admin/profile", data);
+  return res.data;
 };

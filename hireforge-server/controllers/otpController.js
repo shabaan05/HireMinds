@@ -10,24 +10,20 @@ console.log("Request body:", req.body);
 
     const user = await User.findOne({ email });
 
-    // ✅ Check if user exists first
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // ✅ Check if OTP exists
     if (!user.otp) {
       return res.status(400).json({ message: "No OTP found" });
     }
 
-    // ✅ Compare OTP safely
 const isOtpValid = await bcrypt.compare(String(otp), user.otp);
 
     if (!isOtpValid) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    // ✅ Check expiration
     if (user.otpExpires < Date.now()) {
       return res.status(400).json({ message: "OTP expired" });
     }
@@ -41,7 +37,6 @@ const isOtpValid = await bcrypt.compare(String(otp), user.otp);
 
     user.refreshToken = refreshToken;
     await user.save();
-console.log("OTP VERIFIED SUCCESSFULLY");
 
     res.json({
       accessToken,

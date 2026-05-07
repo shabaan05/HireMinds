@@ -9,21 +9,34 @@ function StatsSection() {
   ];
 
   return (
-    <div>
-      <h3>Your Stats</h3>
+  <div className="space-y-4">
 
-      <div style={{ display: "flex", gap: "20px" }}>
-        {stats.map((stat, index) => (
+    {/* HEADER */}
+    <h3 className="text-xl font-semibold text-gray-100">
+      Your Stats
+    </h3>
+
+    {/* STATS GRID */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      {stats.map((stat, index) => (
+        <div
+          key={index}
+          className="bg-gray-900 border border-gray-800 rounded-2xl p-5 
+                     hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] 
+                     transition duration-300"
+        >
           <StatsCard
-            key={index}
             title={stat.title}
             value={stat.value}
           />
-        ))}
-      </div>
+        </div>
+      ))}
 
     </div>
-  );
+
+  </div>
+);
 }
 
 export default StatsSection;

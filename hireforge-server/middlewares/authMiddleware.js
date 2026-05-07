@@ -18,11 +18,6 @@ const authMiddleware = async (req, res, next) => {
     // Optional: check if user still exists changes here
     const user = await User.findById(decoded._id || decoded.id).select("-password");
 
-    //test
-    console.log("AUTH HEADER:", req.headers.authorization);
-console.log("DECODED:", decoded);
-console.log("USER:", user);
-console.log("DECODED:", decoded);
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }

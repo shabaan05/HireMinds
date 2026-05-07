@@ -15,51 +15,90 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
-      <Link to="/" style={{ marginRight: "15px" }}>
-        <strong>HireForge</strong>
-      </Link>
+  <nav className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between text-gray-100">
 
-      {token && (
+    {/* LOGO */}
+    <Link to="/" className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+      HireForge
+    </Link>
+
+    {/* LINKS */}
+    <div className="flex items-center gap-6 text-sm">
+
+      {token ? (
         <>
-          <Link to="/candidate/dashboard" style={{ marginRight: "15px" }}>
+          <Link
+            to="/candidate/dashboard"
+            className="hover:text-blue-400 transition"
+          >
             Dashboard
           </Link>
-          <Link to="/candidate/profile" style={{ marginRight: "15px" }}>
+
+          <Link
+            to="/candidate/profile"
+            className="hover:text-blue-400 transition"
+          >
             Profile
           </Link>
-        <Link to="/candidate/MyAttempts" style={{ marginRight: "15px" }}>
-  My Attempts
-</Link>
- <Link to="/candidate/interviews" style={{ marginRight: "15px" }}>
-  Interviews
-</Link>
+
+          <Link
+            to="/candidate/MyAttempts"
+            className="hover:text-blue-400 transition"
+          >
+            My Attempts
+          </Link>
+
+          <Link
+            to="/candidate/interviews"
+            className="hover:text-blue-400 transition"
+          >
+            Interviews
+          </Link>
 
           {user?.role === "admin" && (
-            <Link to="/admin" style={{ marginRight: "15px" }}>
+            <Link
+              to="/admin"
+              className="hover:text-purple-400 transition"
+            >
               Admin
             </Link>
           )}
 
-          <button onClick={handleLogout}>
+          {/* LOGOUT BUTTON */}
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1.5 rounded-lg text-sm 
+                       bg-red-500/10 text-red-400 border border-red-500/20 
+                       hover:bg-red-500/20 transition"
+          >
             Logout
           </button>
         </>
-      )}
-
-      {!token && (
+      ) : (
         <>
-          <Link to="/login" style={{ marginRight: "15px" }}>
+          <Link
+            to="/login"
+            className="hover:text-blue-400 transition"
+          >
             Login
           </Link>
 
-          <Link to="/register">
+          <Link
+            to="/register"
+            className="px-4 py-1.5 rounded-lg text-sm font-medium text-white
+                       bg-gradient-to-r from-blue-500 to-purple-600
+                       hover:shadow-[0_0_10px_rgba(139,92,246,0.5)]
+                       transition"
+          >
             Register
           </Link>
         </>
       )}
-    </nav>
-  );
+
+    </div>
+
+  </nav>
+);
 };
 
 export default Navbar;

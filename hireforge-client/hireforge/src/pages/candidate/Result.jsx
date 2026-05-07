@@ -1,69 +1,4 @@
-// import { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
 
-// import { getAttemptById } from "../../services/attemptService";
-// const Result = () => {
-//   const { attemptId } = useParams();
-// const navigate = useNavigate();
-//   const [result, setResult] = useState(null);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchResult = async () => {
-//       try {
-//         const res = await getAttemptById(attemptId);
-        
-//         setResult(res);
-//       } catch (err) {
-//         console.error(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchResult();
-//   }, [attemptId]);
-
-//   if (loading) return <div className="p-6">Loading result...</div>;
-//   if (!result) return <div className="p-6">Result not found</div>;
-// const totalQuestions = result?.answers?.length || 0;
-
-// const correctAnswers =
-//   result?.answers?.filter((ans) => ans.obtainedMarks > 0).length || 0;
-
-// const incorrectAnswers = totalQuestions - correctAnswers;
-//   return (
-//     <div className="max-w-3xl mx-auto p-6">
-      
-//       <h1 className="text-2xl font-bold mb-4">Interview Result</h1>
-
-//       <div className="bg-white shadow p-4 rounded mb-4">
-//         <p><strong>Score:</strong> {result.score || 0}</p>
-//         <p><strong>Status:</strong> {result.status}</p>
-//         <p><strong>Total Questions:</strong> {result.questions?.length}</p>
-//       </div>
-
-//       <div className="bg-gray-50 p-4 rounded">
-//         <h2 className="font-semibold mb-2">Summary</h2>
-        
-// <p><strong>Total Questions:</strong> {totalQuestions}</p>
-// <p>Correct Answers: {correctAnswers}</p>
-// <p>Incorrect Answers: {incorrectAnswers}</p>
-//       </div>
-// <div className="mt-6 text-center">
-//   <button
-//     onClick={() => navigate("/candidate/history")}
-//     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-//   >
-//     Go to History
-//   </button>
-// </div>
-//     </div>
-//   );
-// };
-
-// export default Result;
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -96,68 +31,122 @@ const Result = () => {
     fetchResult();
   }, [attemptId]);
 
-  if (loading) return <div className="p-6">Loading result...</div>;
-  if (error) return <div className="p-6 text-red-500">{error}</div>;
-  if (!result) return <div className="p-6">Result not found</div>;
-
-  const totalQuestions = result.answers?.length || 0;
-
-  const correctAnswers =
-    result.answers?.filter((ans) => ans.obtainedMarks > 0).length || 0;
-
-  const incorrectAnswers = totalQuestions - correctAnswers;
-
-  const percentage = totalQuestions
-    ? ((correctAnswers / totalQuestions) * 100).toFixed(1)
-    : 0;
-
+  if (loading) {
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
-
-      <h1 className="text-2xl font-bold">Interview Result</h1>
-
-      <div className="bg-white shadow p-4 rounded space-y-2">
-        <p>
-          <strong>Score:</strong>{" "}
-          {result.score} / {result.totalMarks}
-        </p>
-
-        <p>
-          <strong>Status:</strong>{" "}
-          <span
-            className={`px-2 py-1 rounded text-sm ${
-              result.status === "evaluated"
-                ? "bg-green-100 text-green-700"
-                : "bg-yellow-100 text-yellow-700"
-            }`}
-          >
-            {result.status}
-          </span>
-        </p>
-
-        <p><strong>Percentage:</strong> {percentage}%</p>
-      </div>
-
-      {/* SUMMARY */}
-      <div className="bg-gray-50 p-4 rounded space-y-1">
-        <h2 className="font-semibold mb-2">Summary</h2>
-
-        <p>Total Questions: {totalQuestions}</p>
-        <p className="text-green-600">Correct: {correctAnswers}</p>
-        <p className="text-red-600">Incorrect: {incorrectAnswers}</p>
-      </div>
-
-      <div className="text-center">
-        <button
-          onClick={() => navigate("/candidate/history")}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Go to History
-        </button>
-      </div>
-
+    <div className="flex items-center justify-center h-[60vh] text-gray-400">
+      Loading result...
     </div>
   );
+}
+
+if (error) {
+  return (
+    <div className="flex items-center justify-center h-[60vh] text-red-400">
+      {error}
+    </div>
+  );
+}
+
+if (!result) {
+  return (
+    <div className="flex items-center justify-center h-[60vh] text-gray-400">
+      Result not found
+    </div>
+  );
+}
+
+const totalQuestions = result.answers?.length || 0;
+
+const correctAnswers =
+  result.answers?.filter((ans) => ans.obtainedMarks > 0).length || 0;
+
+const incorrectAnswers = totalQuestions - correctAnswers;
+
+const percentage = totalQuestions
+  ? ((correctAnswers / totalQuestions) * 100).toFixed(1)
+  : 0;
+
+return (
+  <div className="max-w-4xl mx-auto p-6 space-y-6 text-gray-100">
+
+    {/* HEADER */}
+    <div className="text-center">
+      <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Interview Result
+      </h1>
+      <p className="text-gray-400 text-sm mt-1">
+        Here’s how you performed
+      </p>
+    </div>
+
+    {/* MAIN RESULT CARD */}
+    <div className="bg-gray-900/70 backdrop-blur border border-gray-800 rounded-2xl p-6 space-y-4 text-center">
+
+      <p className="text-lg">
+        Score:
+        <span className="ml-2 text-blue-400 font-bold text-xl">
+          {result.score} / {result.totalMarks}
+        </span>
+      </p>
+
+      <p>
+        Status:{" "}
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${
+            result.status === "evaluated"
+              ? "bg-green-500/10 text-green-400 border border-green-500/20"
+              : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+          }`}
+        >
+          {result.status}
+        </span>
+      </p>
+
+      <p className="text-lg">
+        Percentage:
+        <span className="ml-2 text-purple-400 font-semibold">
+          {percentage}%
+        </span>
+      </p>
+
+    </div>
+
+    {/* SUMMARY */}
+    <div className="bg-gray-900/70 backdrop-blur border border-gray-800 rounded-2xl p-6 space-y-3">
+
+      <h2 className="font-semibold text-gray-100 mb-2">
+        Summary
+      </h2>
+
+      <p className="text-gray-300">
+        Total Questions: {totalQuestions}
+      </p>
+
+      <p className="text-green-400">
+        Correct: {correctAnswers}
+      </p>
+
+      <p className="text-red-400">
+        Incorrect: {incorrectAnswers}
+      </p>
+
+    </div>
+
+    {/* ACTION */}
+    <div className="text-center">
+      <button
+        onClick={() => navigate("/candidate/history")}
+        className="px-5 py-2 rounded-lg text-sm font-medium text-white
+                   bg-gradient-to-r from-blue-500 to-purple-600
+                   hover:shadow-[0_0_12px_rgba(139,92,246,0.6)]
+                   transition"
+      >
+        Go to History →
+      </button>
+    </div>
+
+  </div>
+);
 };
 
 export default Result;
