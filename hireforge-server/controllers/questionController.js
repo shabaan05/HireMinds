@@ -1,55 +1,37 @@
 const Question = require("../models/Question");
-const asyncWrapper = require("../utils/asyncWrapper");
+const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 
+exports.createQuestion = asyncHandler(async (req, res) => {
+  const question = await Question.create(req.body);
 
+  res.status(201).json({
+    success: true,
+    data: question,
+  });
+});
 
-exports.createQuestion = async (req, res) => {
-  try {
-    console.log("BODY:", req.body); // 👈 MUST PRINT
-
-    const question = await Question.create(req.body);
-
-    res.status(201).json({
-      success: true,
-      data: question,
-    });
-
-  } catch (error) {
-    console.error("CREATE QUESTION ERROR:", error); // 👈 THIS IS KEY
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.getQuestions = asyncWrapper(async (req, res) => {
-
+exports.getQuestions = asyncHandler(async (req, res) => {
   const questions = await Question.find();
 
   res.json({
     success: true,
     count: questions.length,
-    data: questions
+    data: questions,
   });
-
 });
-//...
-exports.getQuestionById = async (req, res) => {
-  try {
-    const question = await Question.findById(req.params.id);
 
-    if (!question) {
-      return res.status(404).json({ message: "Question not found" });
-    }
+exports.getQuestionById = asyncHandler(async (req, res) => {
+  const question = await Question.findById(req.params.id);
 
-    res.json({ success: true, data: question });
-
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  if (!question) {
+    throw new AppError("Question not found", 404);
   }
-};
 
-exports.updateQuestion = asyncWrapper(async (req, res) => {
+  res.json({ success: true, data: question });
+});
 
+exports.updateQuestion = asyncHandler(async (req, res) => {
   const question = await Question.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -62,14 +44,11 @@ exports.updateQuestion = asyncWrapper(async (req, res) => {
 
   res.json({
     success: true,
-    data: question
+    data: question,
   });
-
 });
 
-
-exports.deleteQuestion = asyncWrapper(async (req, res) => {
-
+exports.deleteQuestion = asyncHandler(async (req, res) => {
   const question = await Question.findByIdAndDelete(req.params.id);
 
   if (!question) {
@@ -78,7 +57,6 @@ exports.deleteQuestion = asyncWrapper(async (req, res) => {
 
   res.json({
     success: true,
-    message: "Question deleted"
+    message: "Question deleted",
   });
-
 });

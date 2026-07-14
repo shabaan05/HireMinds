@@ -1,287 +1,288 @@
-
-//......................................
 const Attempt = require("../models/Attempt");
 const Interview = require("../models/Interview");
 const Question = require("../models/Question");
-const { evaluateInterview } = require("../services/evaluationService");
+const TestResult = require("../models/TestResult");
 const { evaluateCode } = require("../services/evaluationService");
-// 🚀 Start Interview
-exports.startInterview = async (req, res) => {
-  try {
-    const interview = await Interview.findById(req.params.interviewId);
+const asyncHandler = require("../utils/asyncHandler");
+const AppError = require("../utils/AppError");
 
-    if (!interview || !interview.isActive) {
-      return res.status(404).json({ message: "Interview not available" });
-    }
+// ─── Start Interview ──────────────────────────────────────────────────────────
+exports.startInterview = asyncHandler(async (req, res) => {
+  const interview = await Interview.findById(req.params.interviewId);
 
-    const attempt = await Attempt.create({
-      userId: req.user._id, // ✅ FIXED
-      interviewId: interview._id,
-      totalMarks: interview.totalMarks || 0,
-      status: "in-progress",
-    });
-
-    res.json({ success: true, data: attempt });
-
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  if (!interview || !interview.isActive) {
+    throw new AppError("Interview not available", 404);
   }
-};
 
+  const attempt = await Attempt.create({
+    userId: req.user._id,
+    interviewId: interview._id,
+    totalMarks: interview.totalMarks || 0,
+    status: "in-progress",
+  });
 
-exports.getAttemptById = async (req, res) => {
-  try {
-    console.log("CONTROLLER HIT"); // 🔥 ADD THIS
-
-    const { id } = req.params;
-
-    const attempt = await Attempt.findById(id)
-      .populate("userId", "name email")
-      .populate("interviewId", "title")
-      .populate("answers.questionId")
-      .populate("interviewId", "title duration");
-
-    if (!attempt) {
-      return res.status(404).json({ message: "Attempt not found" });
-    }
-
-    res.json(attempt);
-
-  } catch (error) {
-    console.error("ERROR IN CONTROLLER:", error); // 🔥 THIS WILL SHOW
-    res.status(500).json({ message: "Error fetching attempt" });
-  }
-};
-//..
-const startAttempt = async (req, res) => {
-  try {
-    const { interviewId } = req.body; 
-    const userId = req.user.id;
-
-    const existingAttempt = await Attempt.findOne({
-      user: userId,
-      interview: interviewId,
-    });
- //  2. If attempt is in progress → RESUME
-    if (existingAttempt && existingAttempt.status === "in_progress") {
-      return res.json({ attemptId: existingAttempt._id });
-    }
-
-    // 3. If attempt already completed → BLOCK
-    if (existingAttempt && existingAttempt.status === "completed") {
-      return res.status(400).json({
-        message: "You have already completed this interview",
-      });
-    }
-   
-// else create attempt
-    const attempt = await Attempt.create({
-      user: userId,
-      interview: interviewId,
-      status: "in_progress",
-      startedAt: new Date(),
-    });
-
-    res.json({ attemptId: attempt._id });
-
-  } catch (error) {
-    console.error("startAttempt error:", error);
-    res.status(500).json({ message: "Failed to start attempt" });
-  }
-};
-//..
-
-//..
-exports.submitAttempt = async (req, res) => {
-        console.log("🔥 CONTROLLER STARTED"); // 👈 MUST PRINT
-
-  try {
-
-    const { attemptId } = req.params;
-
-    const attempt = await Attempt.findById(attemptId);
-    console.log("ATTEMPT BEFORE EVAL:", attempt);
-    if (!attempt) {
-      return res.status(404).json({ message: "Attempt not found" });
-    }
-
-    const questions = await Question.find({
-      _id: { $in: attempt.answers.map(a => a.questionId) },
-    });
-
-    let totalMarks = 0;
-    let score = 0;
-    let correctCount = 0;
-    let totalMCQ = 0;
-
-    const updatedAnswers = await Promise.all(
-      attempt.answers.map(async (ans) => {
-        const question = questions.find(
-          (q) => q._id.toString() === ans.questionId.toString()
-        );
-
-        if (!question) return ans;
-
-        // ✅ MCQ Evaluation
-        if (question.type === "mcq") {
-          totalMCQ++;
-          totalMarks += 1;
-
-          if (ans.selectedAnswer === question.correctAnswer) {
-            ans.isCorrect = true;
-            ans.obtainedMarks = 1;
-            score += 1;
-            correctCount++;
-          } else {
-            ans.isCorrect = false;
-            ans.obtainedMarks = 0;
-          }
-        }
-
-        // ✅ Coding Evaluation
-        if (question.type === "coding") {
-         const allTestCases = [
-  ...(question.sampleTestCases || []),
-  ...(question.hiddenTestCases || []),
-];
-
-          const evaluationResult = await evaluateCode({
-            code: ans.codeSubmitted,
-            language: "javascript",
-            testCases: allTestCases,
-            totalMarks: question.marks,
-          });
-
-          ans.obtainedMarks = evaluationResult.obtainedMarks;
-          ans.isCorrect = evaluationResult.status === "accepted";
-          ans.status = evaluationResult.status;
-          ans.passedTestCases = evaluationResult.passedCount;
-          ans.totalTestCases = evaluationResult.totalCount;
-
-          totalMarks += question.marks;
-          score += evaluationResult.obtainedMarks || 0;
-        }
-
-        return ans;
-      })
-    );
-
-    const accuracy =
-      totalMCQ > 0 ? (correctCount / totalMCQ) * 100 : 0;
-
-    attempt.answers = updatedAnswers;
-    attempt.score = score;
-    attempt.totalMarks = totalMarks;
-     attempt.accuracy = accuracy;
-
-    attempt.status = "evaluated";
-    attempt.completedAt = new Date();
-
-    await attempt.save();
-
-    res.json({
-      message: "Submitted successfully",
-      score,
-      totalMarks,
-      accuracy,
-    });
-
-  } catch (error) {
-    console.error("submitAttempt error:", error);
-    res.status(500).json({ message: "Submission failed" });
-  }
-};
-
-const mongoose = require("mongoose");
-// 💾 Save Answer
-exports.saveAnswer = async (req, res) => {
-  try {
-const { questionId, selectedAnswer, codeSubmitted, subjectiveAnswer } = req.body;
-const attemptId = req.params.attemptId;
-if (!questionId) {
-  return res.status(400).json({ message: "questionId is required" });
-}
-    const attempt = await Attempt.findById(attemptId);
-//test
-console.log("BODY:", req.body);
-console.log("PARAMS:", req.params);
-    if (!attempt) {
-      return res.status(404).json({ message: "Attempt not found" });
-    }
-
-  
-   const existing = attempt.answers.find(
-  (ans) => ans.questionId.toString() === questionId.toString()
-);
-
-    if (existing) {
-      existing.selectedAnswer = selectedAnswer ?? existing.selectedAnswer;
-      existing.codeSubmitted = codeSubmitted ?? existing.codeSubmitted;
-      existing.subjectiveAnswer = subjectiveAnswer ?? existing.subjectiveAnswer;
-    } else {
-     attempt.answers.push({
-  questionId: questionId, // explicitly set
-  selectedAnswer: selectedAnswer || "",
-  codeSubmitted: codeSubmitted || "",
-  subjectiveAnswer: subjectiveAnswer || "",
+  res.json({ success: true, data: attempt });
 });
-    }
-//test
-console.log("SAVING ANSWER:", {
-  questionId,
-  codeSubmitted,
-});
-    await attempt.save();
-console.log("UPDATED ATTEMPT:", attempt.answers);
-    res.json({ success: true, message: "Answer saved" });
 
-  } catch (error) {
-    console.error("saveAnswer error:", error);
-    res.status(500).json({ message: "Failed to save answer" });
+// ─── Get Attempt By ID ────────────────────────────────────────────────────────
+exports.getAttemptById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const attempt = await Attempt.findById(id)
+    .populate("userId", "name email")
+    .populate("interviewId", "title duration")
+    .populate("answers.questionId");
+
+  if (!attempt) {
+    throw new AppError("Attempt not found", 404);
   }
-};
 
+  res.json(attempt);
+});
 
-exports.getUserAttempts = async (req, res) => {
-  try {
-    const attempts = await Attempt
-      .find({ userId: req.user._id })
-      .populate("interviewId", "title")
-      .sort({ createdAt: -1 }); 
+// ─── Submit Attempt ───────────────────────────────────────────────────────────
+exports.submitAttempt = asyncHandler(async (req, res) => {
+  const { attemptId } = req.params;
+  // timings: optional map of { [questionId]: secondsTaken } sent from frontend
+  const { timings = {} } = req.body;
 
-    const activeAttempt = attempts.find(
-      (a) => a.status === "in_progress"
-    );
+  const attempt = await Attempt.findById(attemptId);
 
-    const completedAttempts = attempts.filter(
+  if (!attempt) {
+    throw new AppError("Attempt not found", 404);
+  }
+
+  const questions = await Question.find({
+    _id: { $in: attempt.answers.map((a) => a.questionId) },
+  });
+
+  let totalMarks = 0;
+  let score = 0;
+  let correctCount = 0;
+  let totalMCQ = 0;
+
+  // Collect TestResult docs to bulk-insert after scoring
+  const testResultDocs = [];
+
+  const updatedAnswers = await Promise.all(
+    attempt.answers.map(async (ans) => {
+      const question = questions.find(
+        (q) => q._id.toString() === ans.questionId.toString()
+      );
+
+      if (!question) return ans;
+
+      // ── MCQ scoring ──────────────────────────────────────────────────────
+      if (question.type === "mcq") {
+        totalMCQ++;
+        totalMarks += 1;
+
+        if (ans.selectedAnswer === question.correctAnswer) {
+          ans.isCorrect = true;
+          ans.obtainedMarks = 1;
+          score += 1;
+          correctCount++;
+        } else {
+          ans.isCorrect = false;
+          ans.obtainedMarks = 0;
+        }
+      }
+
+      // ── Coding scoring ───────────────────────────────────────────────────
+      if (question.type === "coding") {
+        const allTestCases = [
+          ...(question.sampleTestCases || []),
+          ...(question.hiddenTestCases || []),
+        ];
+
+        const evaluationResult = await evaluateCode({
+          code: ans.codeSubmitted,
+          language: "javascript",
+          testCases: allTestCases,
+          totalMarks: question.marks,
+        });
+
+        ans.obtainedMarks = evaluationResult.obtainedMarks;
+        ans.isCorrect = evaluationResult.status === "accepted";
+        ans.status = evaluationResult.status;
+        ans.passedTestCases = evaluationResult.passedCount;
+        ans.totalTestCases = evaluationResult.totalCount;
+
+        totalMarks += question.marks;
+        score += evaluationResult.obtainedMarks || 0;
+      }
+//.......
+console.log({
+  topic: question.topic,
+  subtopic: question.subtopic,
+  difficulty: question.difficulty,
+});
+      // ── Build TestResult record (only if question has topic/subtopic) ────
+      if (question.topic && question.subtopic && question.difficulty) {
+        const timeTaken =
+          timings[ans.questionId.toString()] ||
+          timings[String(ans.questionId)] ||
+          0;
+
+        testResultDocs.push({
+          userId: attempt.userId,
+          questionId: question._id,
+          topic: question.topic,
+          subtopic: question.subtopic,
+          difficulty: question.difficulty,
+          isCorrect: ans.isCorrect || false,
+          timeTaken,
+        });
+      }
+
+      return ans;
+    })
+  );
+
+  const accuracy = totalMCQ > 0 ? (correctCount / totalMCQ) * 100 : 0;
+
+  attempt.answers = updatedAnswers;
+  attempt.score = score;
+  attempt.totalMarks = totalMarks;
+  attempt.accuracy = accuracy;
+  attempt.status = "evaluated";
+  attempt.completedAt = new Date();
+
+  // Save attempt and TestResult records in parallel
+  await Promise.all([
+    attempt.save(),
+    testResultDocs.length > 0
+      ? TestResult.insertMany(testResultDocs, { ordered: false })
+      : Promise.resolve(),
+  ]);
+
+  res.json({
+    message: "Submitted successfully",
+    score,
+    totalMarks,
+    accuracy,
+  });
+});
+
+// ─── Save Answer (auto-save during attempt) ───────────────────────────────────
+exports.saveAnswer = asyncHandler(async (req, res) => {
+  const { questionId, selectedAnswer, codeSubmitted, subjectiveAnswer } =
+    req.body;
+  const attemptId = req.params.attemptId;
+
+  if (!questionId) {
+    throw new AppError("questionId is required", 400);
+  }
+
+  const attempt = await Attempt.findById(attemptId);
+
+  if (!attempt) {
+    throw new AppError("Attempt not found", 404);
+  }
+
+  const existing = attempt.answers.find(
+    (ans) => ans.questionId.toString() === questionId.toString()
+  );
+
+  if (existing) {
+    existing.selectedAnswer = selectedAnswer ?? existing.selectedAnswer;
+    existing.codeSubmitted = codeSubmitted ?? existing.codeSubmitted;
+    existing.subjectiveAnswer = subjectiveAnswer ?? existing.subjectiveAnswer;
+  } else {
+    attempt.answers.push({
+      questionId,
+      selectedAnswer: selectedAnswer || "",
+      codeSubmitted: codeSubmitted || "",
+      subjectiveAnswer: subjectiveAnswer || "",
+    });
+  }
+
+  await attempt.save();
+
+  res.json({ success: true, message: "Answer saved" });
+});
+
+// ─── Get User Attempts ────────────────────────────────────────────────────────
+exports.getUserAttempts = asyncHandler(async (req, res) => {
+  const attempts = await Attempt.find({ userId: req.user._id })
+    .populate("interviewId", "title")
+    .sort({ createdAt: -1 });
+
+  const activeAttempt = attempts.find((a) => a.status === "in_progress");
+
+  const completedAttempts = attempts.filter(
     (a) => a.status === "completed" || a.status === "evaluated"
-    );
+  );
 
-    res.json({
-      success: true,
-      activeAttempt,
-      completedAttempts,
-    });
+  res.json({
+    success: true,
+    activeAttempt,
+    completedAttempts,
+  });
+});
 
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+// ─── Get Result ───────────────────────────────────────────────────────────────
+exports.getResult = asyncHandler(async (req, res) => {
+  const attempt = await Attempt.findById(req.params.attemptId).populate(
+    "answers.questionId",
+    "questionText marks"
+  );
+
+  if (!attempt) {
+    throw new AppError("Attempt not found", 404);
   }
-};
 
+  res.json({ success: true, data: attempt });
+});
 
-// 📄 Get Result
-exports.getResult = async (req, res) => {
-  try {
-    const attempt = await Attempt.findById(req.params.attemptId)
-      .populate("answers.questionId", "questionText marks");
+// ─── Get stats ───────────────────────────────────────────────────────────────
+// const Attempt = require("../models/Attempt");
 
-    if (!attempt) {
-      return res.status(404).json({ message: "Attempt not found" });
-    }
+exports.getUserAttemptsgetUserStats = asyncHandler(async (req, res) => {
 
-    res.json({ success: true, data: attempt });
+  const userId = req.user._id;
 
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+  const attempts = await Attempt.find({ userId })
+    .select("score accuracy timeSpent");
+
+  const totalAttempts = attempts.length;
+
+  const bestScore =
+    totalAttempts > 0
+      ? Math.max(...attempts.map((a) => a.score))
+      : 0;
+
+  const averageScore =
+    totalAttempts > 0
+      ? (
+          attempts.reduce((sum, a) => sum + a.score, 0) /
+          totalAttempts
+        ).toFixed(1)
+      : 0;
+
+  const averageAccuracy =
+    totalAttempts > 0
+      ? (
+          attempts.reduce((sum, a) => sum + a.accuracy, 0) /
+          totalAttempts
+        ).toFixed(1)
+      : 0;
+
+  const totalTimeSpent = attempts.reduce(
+    (sum, a) => sum + (a.timeSpent || 0),
+    0
+  );
+
+  res.status(200).json({
+    success: true,
+    data: {
+      totalAttempts,
+      bestScore,
+      averageScore,
+      averageAccuracy,
+      totalTimeSpent,
+    },
+  });
+
+});
+

@@ -1,28 +1,18 @@
 const { executeCode } = require("../services/codeExecutionService");
+const asyncHandler = require("../utils/asyncHandler");
+const AppError = require("../utils/AppError");
 
-exports.runCode = async (req, res) => {
-  try {
-    const { code, language, input } = req.body;
-console.log("req body", req.body)
-    // Basic validation
-    if (!code || !language) {
-      return res.status(400).json({
-        success: false,
-        message: "Code and language are required",
-      });
-    }
+exports.runCode = asyncHandler(async (req, res) => {
+  const { code, language, input } = req.body;
 
-    const result = await executeCode({ code, language, input });
-
-    return res.status(200).json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Code execution failed",
-    });
+  if (!code || !language) {
+    throw new AppError("Code and language are required", 400);
   }
-};
 
+  const result = await executeCode({ code, language, input });
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});

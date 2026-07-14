@@ -1,58 +1,4 @@
-// const mongoose = require("mongoose");
 
-// const userSchema = new mongoose.Schema(
-//   {
-
-//     name: {
-//       type: String,
-//       required: [true, "Name is required"],
-//       trim: true,
-//       minlength: [3, "Name must be at least 3 characters"],
-//     },
-
-//     email: {
-//       type: String,
-//       required: [true, "Email is required"],
-//       unique: true,
-//       lowercase: true,
-//       trim: true,
-//       match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
-//     },
-
-//     password: {
-//       type: String,
-//       required: [true, "Password is required"],
-//       minlength: [6, "Password must be at least 6 characters"],
-//     },
-
-//     role: {
-//       type: String,
-//       enum: ["admin", "candidate"],
-//       default: "admin",
-//     },
-
-//     resumeUrl: {
-//       type: String,
-//       default: "",
-//     },
-
-//     refreshToken: {
-//       type: String,
-//       default: "",
-//     },
-//     otp: String,
-// otpExpires: Date,
-// twoFactorEnabled: {
-//   type: Boolean,
-//   default: true 
-// }
-
-//   },
-  
-//   { timestamps: true }
-// );
-
-// module.exports = mongoose.model("User", userSchema);
 //..................
 const mongoose = require("mongoose");
 
@@ -82,8 +28,8 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["admin", "candidate"],
-      default: "candidate",
+      enum: ["admin", "user"],
+      default: "user", // self-registered users are always normal users
     },
 
     resumeUrl: {
@@ -99,7 +45,7 @@ const userSchema = new mongoose.Schema(
 
     otp: {
       type: String,
-      default: "",
+      default: null,   // null is the correct "not set" sentinel — empty string is falsy too
     },
 
     otpExpires: {
@@ -108,7 +54,7 @@ const userSchema = new mongoose.Schema(
 
     twoFactorEnabled: {
       type: Boolean,
-      default: true,
+      default: false, // OTP is now role-based (admin only) — this field is no longer the gate
     },
   },
 
@@ -127,8 +73,6 @@ userSchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.password;
     delete ret.refreshToken;
-    delete ret.otp;
-
     return ret;
   },
 });

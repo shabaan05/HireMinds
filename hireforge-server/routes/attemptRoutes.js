@@ -9,7 +9,8 @@
     getResult,
     getUserAttempts,
     getAttemptById,
-    submitAttempt
+    submitAttempt,
+    getUserAttemptsgetUserStats
     
   } = require("../controllers/attemptController");
 
@@ -27,8 +28,6 @@ router.use((req, res, next) => {
   // router.get("/attempt/:id", getAttemptById);
 
   
-  // // Submit interview
-  // router.post("/:attemptId/submit", authMiddleware, submitInterview);
   // submit attempt
     router.post("/:attemptId/submit", authMiddleware, submitAttempt);
 
@@ -39,5 +38,7 @@ router.use((req, res, next) => {
 
   //by id
   router.get("/single/:id",  getAttemptById);
+//stats
+router.get("/stats", authMiddleware, getUserAttemptsgetUserStats);
 
   module.exports = router;

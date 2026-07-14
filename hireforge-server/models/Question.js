@@ -1,96 +1,6 @@
-// const mongoose = require("mongoose");
-
-
-
-// const testCaseSchema = new mongoose.Schema({
-//   input: {
-//     type: String,
-//     required: true,
-//   },
-//   output: {
-//     type: String,
-//     required: true,
-//   },
-// });
-
-// // question schema
-// const questionSchema = new mongoose.Schema(
-//   {
-//     type: {
-//       type: String,
-//       enum: ["mcq", "coding", "subjective"],
-//       required: true,
-//     },
-
-//     questionText: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-
-//     options: {
-//       type: [String],
-//       default: [],
-//     },
-
-//     correctAnswer: {
-//       type: String,
-//       required: function () {
-//         return this.type === "mcq";
-//       },
-//     },
-
-//     sampleTestCases: {
-//   type: [testCaseSchema],
-//   default: [],
-//   validate: {
-//     validator: function (value) {
-//       if (this.type === "coding") {
-//         return value.length > 0;
-//       }
-//       return true;
-//     },
-//   },
-// },
-
-// hiddenTestCases: {
-//   type: [testCaseSchema],
-//   default: [],
-//   validate: {
-//     validator: function (value) {
-//       if (this.type === "coding") {
-//         return value.length > 0;
-//       }
-//       return true;
-//     },
-//   },
-// },
-   
-
-//     marks: {
-//       type: Number,
-//       required: true,
-//       min: 1,
-//     },
-
-//     difficulty: {
-//       type: String,
-//       enum: ["easy", "medium", "hard"],
-//       default: "medium",
-//     },
-
-//     topic: String,
-//   },
-//   { timestamps: true }
-// );
-
-// const Question = mongoose.model("Question", questionSchema);
-
-// module.exports = Question;
-//..................
 const mongoose = require("mongoose");
 
-/* TEST CASE SCHEMA */
+// ─── Test Case Sub-Schema ────────────────────────────────────────────────────
 const testCaseSchema = new mongoose.Schema(
   {
     input: {
@@ -98,7 +8,6 @@ const testCaseSchema = new mongoose.Schema(
       required: [true, "Input is required"],
       trim: true,
     },
-
     output: {
       type: String,
       required: [true, "Output is required"],
@@ -108,7 +17,7 @@ const testCaseSchema = new mongoose.Schema(
   { _id: false }
 );
 
-/* QUESTION SCHEMA */
+// ─── Question Schema ─────────────────────────────────────────────────────────
 const questionSchema = new mongoose.Schema(
   {
     type: {
@@ -127,61 +36,43 @@ const questionSchema = new mongoose.Schema(
     options: {
       type: [String],
       default: [],
-
       validate: {
         validator: function (value) {
-          if (this.type === "mcq") {
-            return value.length >= 2;
-          }
+          if (this.type === "mcq") return value.length >= 2;
           return true;
         },
-
         message: "MCQ must contain at least 2 options",
       },
     },
 
     correctAnswer: {
       type: String,
-
       required: function () {
         return this.type === "mcq";
       },
-
       trim: true,
     },
 
     sampleTestCases: {
       type: [testCaseSchema],
-
       default: [],
-
       validate: {
         validator: function (value) {
-          if (this.type === "coding") {
-            return value.length > 0;
-          }
-
+          if (this.type === "coding") return value.length > 0;
           return true;
         },
-
         message: "Coding questions must have sample test cases",
       },
     },
 
     hiddenTestCases: {
       type: [testCaseSchema],
-
       default: [],
-
       validate: {
         validator: function (value) {
-          if (this.type === "coding") {
-            return value.length > 0;
-          }
-
+          if (this.type === "coding") return value.length > 0;
           return true;
         },
-
         message: "Coding questions must have hidden test cases",
       },
     },
@@ -192,32 +83,37 @@ const questionSchema = new mongoose.Schema(
       min: [1, "Marks must be at least 1"],
     },
 
+    // ── Recommendation fields ──────────────────────────────────────────────
+    topic: {
+      type: String,
+      required: [true, "Topic is required"],
+      trim: true,
+    },
+
+    subtopic: {
+      type: String,
+      required: [true, "Subtopic is required"],
+      trim: true,
+    },
+
     difficulty: {
       type: String,
       enum: ["easy", "medium", "hard"],
+      required: [true, "Difficulty is required"],
       default: "medium",
     },
-
-    topic: {
-      type: String,
-      trim: true,
-      default: "General",
-    },
   },
-
   { timestamps: true }
 );
 
+// ─── Indexes ─────────────────────────────────────────────────────────────────
 questionSchema.index({ type: 1 });
-
 questionSchema.index({ difficulty: 1 });
-
 questionSchema.index({ topic: 1 });
 
+// ─── Virtuals ────────────────────────────────────────────────────────────────
 questionSchema.virtual("isCoding").get(function () {
   return this.type === "coding";
 });
 
-const Question = mongoose.model("Question", questionSchema);
-
-module.exports = Question;
+module.exports = mongoose.model("Question", questionSchema);

@@ -25,10 +25,7 @@ const evaluateCode = async ({ code, language, testCases, totalMarks }) => {
       };
     }
 
-    // const actualOutput = result.output?.trim();
-    // const expected = expectedOutput.trim();
-
-    // const isPassed = actualOutput === expected;
+    
 const normalize = (str) =>
   (str || "")
     .toString()
@@ -47,12 +44,7 @@ const isPassed = actual === expected;
 
     if (isPassed) passedCount++;
 
-    // results.push({
-    //   input,
-    //   expected,
-    //   actual: actualOutput,
-    //   passed: isPassed,
-    // });
+  
     results.push({
   input,
   expected,
