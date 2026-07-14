@@ -25,9 +25,25 @@ app.use(express.json());
 //     credentials: true,
 //   })
 // );
-app.use(helmet());
+const allowedOrigins = [
+  "http://localhost:5173",
+];
 
-app.use(cors());
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+app.use(helmet());
+app.set("trust proxy", 1);
+// app.use(cors());
 app.use("/api", apiLimiter);
 
 // Routes
