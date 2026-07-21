@@ -21,16 +21,17 @@ function getTransporter() {
   console.log("[sendEmail] Creating SMTP transporter for:", user);
   console.log("[sendEmail] App Password length:", pass.length, "(must be 16)");
 
-  _transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,           // SSL on port 465
-    auth: { user, pass },   // pass = 16-char Gmail App Password, no spaces
-    connectionTimeout: 10_000,
-    greetingTimeout: 10_000,
-    socketTimeout: 15_000,
-  });
+ _transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  requireTLS: true,
+  auth: { user, pass },
 
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
+});
   return _transporter;
 }
 

@@ -60,18 +60,9 @@ exports.login = asyncHandler(async (req, res) => {
     } catch (mailErr) {
       console.error(mailErr);
 
-  // Comment these lines temporarily
-  // user.otp = null;
-  // user.otpExpires = null;
-  // await user.save();
 
-  throw new AppError(
-    "Could not send OTP email. Please try again.",
-    500
-  );
-      // user.otp = null;
-      // user.otpExpires = null;
-      // await user.save();
+
+     
 
       throw new AppError(
         "Could not send OTP email. Please try again.",
