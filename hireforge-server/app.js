@@ -23,7 +23,8 @@ app.use(helmet());
 
 const allowedOrigins = [
   "http://localhost:5173",
-    "https://hireminds.vercel.app",
+    "https://hireforge05.netlify.app",
+
 
  
 ];
