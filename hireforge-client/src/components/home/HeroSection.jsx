@@ -34,7 +34,7 @@ const HeroSection = () => {
         </Link>
 
         <Link
-          to="/candidate/interviews"
+          to="/user/interviews"
           className="px-7 py-3 rounded-xl border border-gray-700
                      hover:border-blue-400 hover:text-blue-400 transition"
         >

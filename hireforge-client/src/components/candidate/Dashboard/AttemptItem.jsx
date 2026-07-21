@@ -32,7 +32,7 @@ function AttemptItem({ attempt }) {
     {/* ACTION BUTTON */}
     <button
       onClick={() =>
-        navigate(`/candidate/attempts/${attempt._id}`)
+        navigate(`/user/attempts/${attempt._id}`)
       }
       className="px-3 py-1.5 text-sm rounded-lg 
                  bg-gradient-to-r from-blue-500 to-purple-600 text-white 

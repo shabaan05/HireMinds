@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 function InterviewCard({ interview }) {
 
   const navigate = useNavigate();
-console.log("inetrview" ,interview);//test
+
   return (
   <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-5 overflow-hidden 
                   hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition">
@@ -26,15 +26,21 @@ console.log("inetrview" ,interview);//test
 
       {/* BUTTON */}
       <button
-        onClick={() => {
-          if (!interview?._id) return;
+          onClick={() => {
+    if (!interview?._id) return;
 
-          navigate(`/user/interviews/instructions/${interview._id}`);
-        }}
-        className="mt-2 px-4 py-2 text-sm font-medium rounded-lg 
-                   bg-gradient-to-r from-blue-500 to-purple-600 text-white 
-                   hover:shadow-[0_0_15px_rgba(139,92,246,0.6)] 
-                   transition"
+const token = localStorage.getItem("accessToken");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(`/user/interviews/instructions/${interview._id}`);
+  }}
+  className="mt-2 px-4 py-2 text-sm font-medium rounded-lg 
+             bg-gradient-to-r from-blue-500 to-purple-600 text-white 
+             hover:shadow-[0_0_15px_rgba(139,92,246,0.6)] 
+             transition"
       >
         Start Interview 🚀
       </button>
