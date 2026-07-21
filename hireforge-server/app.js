@@ -23,8 +23,9 @@ app.use(helmet());
 
 const allowedOrigins = [
   "http://localhost:5173",
-  // Add after frontend deployment
-  // "https://your-app.vercel.app",
+    "https://hireminds.vercel.app",
+
+ 
 ];
 
 app.use(
@@ -53,7 +54,12 @@ app.set("trust proxy", 1);
 ========================= */
 
 app.use("/api", apiLimiter);
-
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "HireMinds API is running",
+  });
+});
 /* =========================
    Routes
 ========================= */
