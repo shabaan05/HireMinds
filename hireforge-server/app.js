@@ -1,14 +1,3 @@
-
-const authRoutes = require("./routes/authRoutes");
-const interviewRoutes = require("./routes/interviewRoutes");
-const questionRoutes = require("./routes/questionRoutes");
-const attemptRoutes = require("./routes/attemptRoutes");
-const  adminRoutes = require("./routes/adminRoutes")
-const codeRoutes = require("./routes/codeRoutes");
-const recommendationRoutes = require("./routes/recommendation.routes");
-const roadmapRoutes = require("./routes/roadmap.Routes.js")
-const errorHandler = require("./middlewares/errorHandler");
-const { apiLimiter } = require("./middlewares/rateLimiter.middleware");
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -25,6 +14,10 @@ const errorHandler = require("./middlewares/errorHandler");
 const { apiLimiter } = require("./middlewares/rateLimiter.middleware");
 
 const app = express();
+
+/* =========================
+   Security Middleware
+========================= */
 
 app.use(helmet());
 
@@ -47,15 +40,23 @@ app.use(
   })
 );
 
+/* =========================
+   General Middleware
+========================= */
+
 app.use(express.json());
 
 app.set("trust proxy", 1);
 
-
+/* =========================
+   Rate Limiting
+========================= */
 
 app.use("/api", apiLimiter);
 
-
+/* =========================
+   Routes
+========================= */
 
 app.use("/api/auth", authRoutes);
 app.use("/api/interviews", interviewRoutes);
@@ -66,7 +67,9 @@ app.use("/api/code", codeRoutes);
 app.use("/api/recommendations", recommendationRoutes);
 app.use("/api/roadmap", roadmapRoutes);
 
-
+/* =========================
+   Error Handler
+========================= */
 
 app.use(errorHandler);
 
