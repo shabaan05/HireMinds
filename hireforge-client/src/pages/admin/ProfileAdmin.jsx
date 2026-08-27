@@ -1,12 +1,19 @@
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileCard from "../../components/admin/profile/ProfileCard";
 import ProfileForm from "../../components/admin/profile/ProfileForm";
 import { getAdminProfile } from "../../services/adminService";
 
 function ProfileAdmin() {
+  const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -75,6 +82,17 @@ function ProfileAdmin() {
           <ProfileForm admin={admin} onRefresh={fetchProfile} />
         </div>
 
+      </div>
+
+      {/* LOGOUT */}
+      <div className="pt-2">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="px-6 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+        >
+          Logout
+        </button>
       </div>
 
     </div>

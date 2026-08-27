@@ -4,8 +4,18 @@ const evaluateCode = async ({ code, language, testCases, totalMarks }) => {
   let passedCount = 0;
   let results = [];
 
+  console.log("===== CODE EVALUATION =====");
+  console.log("Language:", language);
+  console.log("Total marks:", totalMarks);
+  console.log("Test cases count:", testCases.length);
+  console.log("Code:\n", code);
+
   for (let testCase of testCases) {
     const { input, output: expectedOutput } = testCase;
+
+    console.log("--- Running test case ---");
+    console.log("Input:", JSON.stringify(input));
+    console.log("Expected output:", JSON.stringify(expectedOutput));
 
     const result = await executeCode({
       code,
@@ -37,8 +47,7 @@ const normalize = (str) =>
 const actual = normalize(result.output);
 const expected = normalize(expectedOutput);
 
-console.log("EXPECTED:", expected);
-console.log("ACTUAL:", actual);
+
 
 const isPassed = actual === expected;
 
@@ -53,15 +62,18 @@ const isPassed = actual === expected;
 });
   }
 
-  // Final status
+  // Final status — treat 0 test cases as a data problem, not "accepted"
   const status =
-    passedCount === testCases.length ? "accepted" : "wrong_answer";
+    testCases.length === 0
+      ? "no_test_cases"
+      : passedCount === testCases.length
+      ? "accepted"
+      : "wrong_answer";
 
-  // Simple scoring
- const obtainedMarks =
-  testCases.length > 0
-    ? (passedCount / testCases.length) * totalMarks
-    : 0;
+  const obtainedMarks =
+    testCases.length > 0
+      ? (passedCount / testCases.length) * totalMarks
+      : 0;
 
   return {
     status,
@@ -97,26 +109,7 @@ const evaluateInterview = async (attempt) => {
       }
     }
 
-// CODING (MAIN FIX)
-//   if (question.type === "coding") {
-//   const allTestCases = [
-//     ...(question.sampleTestCases || []),
-//     ...(question.hiddenTestCases || []),
-//   ];
 
-//   const result = await evaluateCode({
-//     code: ans.codeSubmitted,
-//     language: "javascript",
-//     testCases: allTestCases,
-//     totalMarks: question.marks,
-//   });
-
-//   ans.isCorrect = result.status === "accepted";
-//   ans.obtainedMarks = result.obtainedMarks;
-//   ans.results = result.results;
-
-//   totalScore += result.obtainedMarks || 0;
-// }
 if (question.type === "coding") {
   const result = await evaluateCode({
     code: ans.codeSubmitted,

@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["admin", "user"],
-      default: "user", // self-registered users are always normal users
+      default: "user", 
     },
 
     resumeUrl: {
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
 
     otp: {
       type: String,
-      default: null,   // null is the correct "not set" sentinel — empty string is falsy too
+      default: null,   
     },
 
     otpExpires: {
@@ -54,14 +54,13 @@ const userSchema = new mongoose.Schema(
 
     twoFactorEnabled: {
       type: Boolean,
-      default: false, // OTP is now role-based (admin only) — this field is no longer the gate
+      default: false,
     },
   },
 
   { timestamps: true }
 );
 
-// userSchema.index({ email: 1 });
 
 userSchema.index({ role: 1 });
 

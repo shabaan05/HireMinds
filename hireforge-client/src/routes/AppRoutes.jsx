@@ -17,6 +17,7 @@ import History from "../pages/candidate/History";
 import Dashboard from "../pages/candidate/Dashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import QuestionBank from "../pages/admin/QuestionBank";
+import CreateQuestion from "../pages/admin/CreateQuestion";
 import Attempts from "../pages/admin/Attempts";
 import AttemptDetails1 from "../pages/admin/AttemptDetails1";
 import AttemptDetails from "../pages/candidate/AttemptDetails";
@@ -76,6 +77,7 @@ const AppRoutes = () => {
         <Route path="interviews/:id/manage" element={<ManageInterview />} />
         <Route path="interviews/:id/questions" element={<ManageInterviewQuestions />} />
         <Route path="questions" element={<QuestionBank />} />
+        <Route path="questions/create" element={<CreateQuestion />} />
 
       </Route>
 

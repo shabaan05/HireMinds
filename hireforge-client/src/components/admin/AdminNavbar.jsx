@@ -1,12 +1,6 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import ProfileAdmin from "../../pages/admin/ProfileAdmin";
-function AdminNavbar() {
-  const navigate = useNavigate();
+import { NavLink } from "react-router-dom";
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+function AdminNavbar() {
 
 return (
   <nav className="bg-white border-b shadow-sm px-6 py-4 flex justify-between items-center">
@@ -82,14 +76,6 @@ return (
       >
         Attempts
       </NavLink>
-
-      {/* LOGOUT BUTTON */}
-      <button
-        onClick={handleLogout}
-        className="ml-4 px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-      >
-        Logout
-      </button>
 
     </div>
 

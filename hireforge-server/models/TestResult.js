@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 
-// ─── TestResult Schema ────────────────────────────────────────────────────────
-// Stores per-question performance data for every submitted attempt.
-// Used exclusively by the recommendation engine — not by saveAnswer().
 const testResultSchema = new mongoose.Schema(
   {
     userId: {

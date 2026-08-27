@@ -1,4 +1,4 @@
-const QuestionPalette = ({ questions, currentIndex, answers, setCurrentIndex }) => {
+const QuestionPalette = ({ questions, currentIndex, answers, onQuestionChange }) => {
   return (
     <div className="mt-4">
       <h4>Questions</h4>
@@ -22,7 +22,8 @@ const QuestionPalette = ({ questions, currentIndex, answers, setCurrentIndex }) 
           return (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
+              type="button"
+              onClick={() => onQuestionChange(index)}
               className={`w-10 h-10 rounded ${statusClass}`}
             >
               {index + 1}

@@ -1,39 +1,58 @@
+import { useNavigate } from "react-router-dom";
 import AttemptItem from "./AttemptItem";
 
-function RecentAttempts({ attempts = [] }) {
+function RecentAttempts({ attempts = [], loading }) {
+  const navigate = useNavigate();
+  const recent = attempts.slice(0, 5);
 
-  const recentAttempts = attempts.slice(0, 5);
-
-return (
-  <div className="bg-gray-900/70 backdrop-blur border border-gray-800 rounded-2xl p-5">
-
-    <h3 className="text-lg font-semibold text-white mb-4">
-      Recent Attempts
-    </h3>
-
-    {recentAttempts.length === 0 ? (
-      <p className="text-gray-400 text-sm">
-        No attempts found
-      </p>
-    ) : (
-      <div className="space-y-3">
-        {recentAttempts.map((attempt) => (
-          <div
-            key={attempt._id}
-            className="bg-gradient-to-r from-gray-800 to-gray-900 
-                       border border-gray-700 rounded-xl p-4 
-                       hover:border-blue-500 
-                       hover:shadow-[0_0_10px_rgba(59,130,246,0.25)] 
-                       transition cursor-pointer"
+  return (
+    <div className="space-y-3 pb-8">
+      {/* Section header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+          Recent Attempts
+        </h2>
+        {attempts.length > 5 && (
+          <button
+            type="button"
+            onClick={() => navigate("/user/attempts")}
+            className="text-xs text-blue-400 hover:text-blue-300 transition"
           >
-            <AttemptItem attempt={attempt} />
-          </div>
-        ))}
+            View all →
+          </button>
+        )}
       </div>
-    )}
 
-  </div>
-);
+      {/* States */}
+      {loading ? (
+        <div className="bg-gray-900 border border-white/5 rounded-2xl p-8 text-center text-gray-600 text-sm">
+          Loading attempts…
+        </div>
+      ) : recent.length === 0 ? (
+        <div className="bg-gray-900 border border-white/5 rounded-2xl p-10 text-center space-y-4">
+          <p className="text-2xl">🎯</p>
+          <p className="text-sm text-gray-400 font-medium">No attempts yet</p>
+          <p className="text-xs text-gray-600">Start your first interview to see your performance here.</p>
+          <button
+            type="button"
+            onClick={() => navigate("/user/interviews")}
+            className="px-5 py-2 text-sm font-semibold rounded-lg
+                       bg-gradient-to-r from-blue-500 to-purple-600 text-white
+                       hover:from-blue-400 hover:to-purple-500
+                       transition-all shadow-lg shadow-blue-500/20"
+          >
+            Browse Interviews
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {recent.map((attempt) => (
+            <AttemptItem key={attempt._id} attempt={attempt} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default RecentAttempts;

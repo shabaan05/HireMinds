@@ -83,7 +83,6 @@ const questionSchema = new mongoose.Schema(
       min: [1, "Marks must be at least 1"],
     },
 
-    // ── Recommendation fields ──────────────────────────────────────────────
     topic: {
       type: String,
       required: [true, "Topic is required"],
@@ -106,7 +105,6 @@ const questionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ─── Indexes ─────────────────────────────────────────────────────────────────
 questionSchema.index({ type: 1 });
 questionSchema.index({ difficulty: 1 });
 questionSchema.index({ topic: 1 });

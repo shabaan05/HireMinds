@@ -1,13 +1,9 @@
-import { useState } from "react";
-
 let listeners = [];
 
 export function useToast() {
-  const [, setState] = useState({});
-
-  const toast = ({ title, description }) => {
+  const toast = ({ title, description, variant }) => {
     listeners.forEach((listener) =>
-      listener({ title, description })
+      listener({ title, description, variant })
     );
   };
 
@@ -16,4 +12,8 @@ export function useToast() {
 
 export function subscribe(listener) {
   listeners.push(listener);
+  // Return unsubscribe function so Toaster can clean up on unmount
+  return () => {
+    listeners = listeners.filter((l) => l !== listener);
+  };
 }

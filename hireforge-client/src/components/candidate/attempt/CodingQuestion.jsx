@@ -1,25 +1,17 @@
-
-
 import { useEffect } from "react";
-import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { useAttempt } from "../../../context/AttemptContext";
+
 const CodingQuestion = ({
   question,
- 
   input,
   setInput,
   isSubmitted,
-    onAnswerChange ,  // ✅ ADD THIS
-
+  onAnswerChange,
 }) => {
-console.log("CodingQuestion RENDERED");
-const [code, setCode] = useState("");
-
-  // ✅ Safety check
-// const answer = answers[question._id];
-const { answers, setAnswers } = useAttempt();
-const currentAnswer = answers[question._id] || {};
+  // Use context code so handleRunCode in AttemptInterview reads the correct value
+  const { code, setCode, answers } = useAttempt();
+  const currentAnswer = answers[question._id] || {};
 useEffect(() => {
   if (!question) return;
 
@@ -43,7 +35,7 @@ solve();`;
   } else {
     setCode(defaultCode);
   }
-}, [question]); // ✅ ONLY question
+}, [question]); //  ONLY question
   if (!question) {
     return <div>Loading question...</div>;
   }
@@ -94,19 +86,37 @@ solve();`;
 />
 
       {/* 🧾 Input Box */}
-      <div className="mt-4">
-        <h4 className="font-semibold mb-1">Input:</h4>
+      <div className="mt-5">
+  <h4 className="text-sm font-semibold text-gray-300 mb-2">
+    Input
+  </h4>
 
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={isSubmitted}
-          placeholder="Enter input (e.g. 2 3)"
-          className="w-full border p-2 rounded bg-gray-50"
-          rows={3}
-        />
-
-      </div>
+  <textarea
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    disabled={isSubmitted}
+    placeholder="Enter input (e.g. 2 3)"
+    rows={3}
+    className="
+      w-full
+      bg-gray-950
+      border border-gray-700
+      rounded-xl
+      px-4 py-3
+      text-gray-100
+      placeholder-gray-500
+      font-mono text-sm
+      outline-none
+      resize-y
+      transition
+      focus:border-blue-500
+      focus:ring-1
+      focus:ring-blue-500
+      disabled:opacity-60
+      disabled:cursor-not-allowed
+    "
+  />
+</div>
     </div>
   );
 };

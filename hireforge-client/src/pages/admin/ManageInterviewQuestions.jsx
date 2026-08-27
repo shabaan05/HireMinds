@@ -13,10 +13,12 @@ function ManageInterviewQuestions() {
 
   const [questions, setQuestions] = useState([]);
   const [selected, setSelected] = useState([]);
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [filterType, setFilterType] = useState("");
+
   const fetchQuestions = async () => {
     const data = await getQuestions();
-    setQuestions(data); 
+    setQuestions(data);
   };
 
   useEffect(() => {
@@ -85,13 +87,13 @@ return questions.length === 0 ? (
 
     {/* FILTER */}
     <div className="bg-white rounded-2xl shadow-sm border p-4">
-      <FilterDropdown />
+      <FilterDropdown filterType={filterType} onFilterChange={setFilterType} />
     </div>
 
     {/* TABLE */}
     <div className="bg-white rounded-2xl shadow-sm border p-4 hover:shadow-md transition">
       <QuestionTable
-        questions={questions}
+        questions={filterType ? questions.filter((q) => q.type === filterType) : questions}
         selected={selected}
         onSelect={(id) =>
           setSelected((prev) =>

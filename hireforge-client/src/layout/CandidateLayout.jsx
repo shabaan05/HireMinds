@@ -5,7 +5,9 @@ const CandidateLayout = ({ children }) => {
   const navigate = useNavigate();
  const location = useLocation();
 
-  const hideLayout = location.pathname.startsWith("/user/attempt");
+  const hideLayout =
+    location.pathname.startsWith("/user/attempt/") ||
+    location.pathname.startsWith("/user/interviews/instructions/");
 
 
 

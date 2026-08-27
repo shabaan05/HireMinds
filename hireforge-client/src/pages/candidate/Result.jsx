@@ -72,7 +72,7 @@ if (!result) {
 const totalQuestions = result.answers?.length || 0;
 
 const correctAnswers =
-  result.answers?.filter((ans) => ans.obtainedMarks > 0).length || 0;
+  result.answers?.filter((ans) => ans.isCorrect === true).length || 0;
 
 const incorrectAnswers = totalQuestions - correctAnswers;
 

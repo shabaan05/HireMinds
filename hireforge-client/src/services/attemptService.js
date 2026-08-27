@@ -1,4 +1,3 @@
- import axiosInstance from "./axiosInstance";
 import api from "./axiosInstance";
 
 //  Start Interview
@@ -6,7 +5,11 @@ export const startInterview = async (interviewId) => {
   const res = await api.post(`/attempts/${interviewId}/start`);
   return res.data;
 };
-
+//run code before suubmit
+export const runCode = async (data) => {
+  const res = await api.post("/code/run", data);
+  return res.data;
+};
 // Get Attempt by ID
 export const getAttemptById = async (attemptId) => {
   const res = await api.get(`/attempts/single/${attemptId}`);

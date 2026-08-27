@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getInterviews } from "../../services/interviewService";
 import InterviewTable from "../../components/admin/InterviewList/InterviewTable";
 
 function InterviewList() {
-
+  const navigate = useNavigate();
   const [interviews, setInterviews] = useState([]);
 
   const fetchInterviews = async () => {

@@ -3,6 +3,7 @@ const Interview = require("../models/Interview");
 const Question = require("../models/Question");
 const TestResult = require("../models/TestResult");
 const { evaluateCode } = require("../services/evaluationService");
+const { evaluateMCQ } = require("../services/mcqEvaluationService");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 
@@ -43,7 +44,6 @@ exports.getAttemptById = asyncHandler(async (req, res) => {
 // ─── Submit Attempt ───────────────────────────────────────────────────────────
 exports.submitAttempt = asyncHandler(async (req, res) => {
   const { attemptId } = req.params;
-  // timings: optional map of { [questionId]: secondsTaken } sent from frontend
   const { timings = {} } = req.body;
 
   const attempt = await Attempt.findById(attemptId);
@@ -51,6 +51,10 @@ exports.submitAttempt = asyncHandler(async (req, res) => {
   if (!attempt) {
     throw new AppError("Attempt not found", 404);
   }
+
+  console.log("===== SUBMIT ATTEMPT =====");
+  console.log("Attempt ID:", attemptId);
+  console.log("Answers in DB:", JSON.stringify(attempt.answers, null, 2));
 
   const questions = await Question.find({
     _id: { $in: attempt.answers.map((a) => a.questionId) },
@@ -61,7 +65,6 @@ exports.submitAttempt = asyncHandler(async (req, res) => {
   let correctCount = 0;
   let totalMCQ = 0;
 
-  // Collect TestResult docs to bulk-insert after scoring
   const testResultDocs = [];
 
   const updatedAnswers = await Promise.all(
@@ -72,23 +75,30 @@ exports.submitAttempt = asyncHandler(async (req, res) => {
 
       if (!question) return ans;
 
-      // ── MCQ scoring ──────────────────────────────────────────────────────
-      if (question.type === "mcq") {
-        totalMCQ++;
-        totalMarks += 1;
-
-        if (ans.selectedAnswer === question.correctAnswer) {
-          ans.isCorrect = true;
-          ans.obtainedMarks = 1;
-          score += 1;
-          correctCount++;
-        } else {
-          ans.isCorrect = false;
-          ans.obtainedMarks = 0;
-        }
+      console.log("===== EVALUATING QUESTION =====");
+      console.log("Question ID:", question._id);
+      console.log("Question:", question.questionText);
+      console.log("Type:", question.type);
+      console.log("Marks:", question.marks);
+      if (question.type === "coding") {
+        console.log("CODE SUBMITTED:", ans.codeSubmitted);
+        const allTC = [
+          ...(question.sampleTestCases || []),
+          ...(question.hiddenTestCases || []),
+        ];
+        console.log("TEST CASES:", JSON.stringify(allTC, null, 2));
       }
 
-      // ── Coding scoring ───────────────────────────────────────────────────
+      if (question.type === "mcq") {
+        totalMCQ++;
+        const result = evaluateMCQ(ans, question);
+        ans.isCorrect = result.isCorrect;
+        ans.obtainedMarks = result.obtainedMarks;
+        totalMarks += result.totalMarks;
+        score += result.obtainedMarks;
+        if (result.isCorrect) correctCount++;
+      }
+
       if (question.type === "coding") {
         const allTestCases = [
           ...(question.sampleTestCases || []),
@@ -102,6 +112,9 @@ exports.submitAttempt = asyncHandler(async (req, res) => {
           totalMarks: question.marks,
         });
 
+        console.log("===== EVALUATION RESULT =====");
+        console.log(JSON.stringify(evaluationResult, null, 2));
+
         ans.obtainedMarks = evaluationResult.obtainedMarks;
         ans.isCorrect = evaluationResult.status === "accepted";
         ans.status = evaluationResult.status;
@@ -111,13 +124,13 @@ exports.submitAttempt = asyncHandler(async (req, res) => {
         totalMarks += question.marks;
         score += evaluationResult.obtainedMarks || 0;
       }
-//.......
-console.log({
-  topic: question.topic,
-  subtopic: question.subtopic,
-  difficulty: question.difficulty,
-});
-      // ── Build TestResult record (only if question has topic/subtopic) ────
+
+      console.log({
+        topic: question.topic,
+        subtopic: question.subtopic,
+        difficulty: question.difficulty,
+      });
+
       if (question.topic && question.subtopic && question.difficulty) {
         const timeTaken =
           timings[ans.questionId.toString()] ||
@@ -148,7 +161,6 @@ console.log({
   attempt.status = "evaluated";
   attempt.completedAt = new Date();
 
-  // Save attempt and TestResult records in parallel
   await Promise.all([
     attempt.save(),
     testResultDocs.length > 0
@@ -164,7 +176,6 @@ console.log({
   });
 });
 
-// ─── Save Answer (auto-save during attempt) ───────────────────────────────────
 exports.saveAnswer = asyncHandler(async (req, res) => {
   const { questionId, selectedAnswer, codeSubmitted, subjectiveAnswer } =
     req.body;
@@ -202,7 +213,6 @@ exports.saveAnswer = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Answer saved" });
 });
 
-// ─── Get User Attempts ────────────────────────────────────────────────────────
 exports.getUserAttempts = asyncHandler(async (req, res) => {
   const attempts = await Attempt.find({ userId: req.user._id })
     .populate("interviewId", "title")
@@ -221,7 +231,6 @@ exports.getUserAttempts = asyncHandler(async (req, res) => {
   });
 });
 
-// ─── Get Result ───────────────────────────────────────────────────────────────
 exports.getResult = asyncHandler(async (req, res) => {
   const attempt = await Attempt.findById(req.params.attemptId).populate(
     "answers.questionId",
@@ -235,8 +244,7 @@ exports.getResult = asyncHandler(async (req, res) => {
   res.json({ success: true, data: attempt });
 });
 
-// ─── Get stats ───────────────────────────────────────────────────────────────
-// const Attempt = require("../models/Attempt");
+
 
 exports.getUserAttemptsgetUserStats = asyncHandler(async (req, res) => {
 

@@ -2,9 +2,7 @@
 
 const { body, validationResult } = require("express-validator");
 
-/* =========================
-   REGISTER VALIDATION
-========================= */
+
 
 exports.registerValidation = [
   body("name")
@@ -20,9 +18,6 @@ exports.registerValidation = [
     .withMessage("Password must be at least 6 characters")
 ];
 
-/* =========================
-   LOGIN VALIDATION
-========================= */
 
 exports.loginValidation = [
   body("email")
@@ -34,9 +29,7 @@ exports.loginValidation = [
     .withMessage("Password is required")
 ];
 
-/* =========================
-   OTP VALIDATION
-========================= */
+
 
 exports.otpValidation = [
   body("email")
@@ -48,9 +41,7 @@ exports.otpValidation = [
     .withMessage("OTP must be 6 digits")
 ];
 
-/* =========================
-   HANDLE VALIDATION ERRORS
-========================= */
+
 
 exports.validate = (req, res, next) => {
   const errors = validationResult(req);
